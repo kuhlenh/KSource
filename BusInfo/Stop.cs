@@ -8,7 +8,7 @@ namespace BusInfo
     {
         public Stop(
             string code, string id, double lat, int locationType, double lon,
-            string name, List<string> routeIds, string wheelchairBoarding, Direction direction)
+            string name, List<string> routeIds, string wheelchairBoarding)
         {
             Code = code;
             Id = id;
@@ -18,7 +18,7 @@ namespace BusInfo
             Name = name;
             RouteIds = routeIds;
             WheelchairBoarding = wheelchairBoarding;
-            Direction = direction ?? throw new ArgumentNullException(nameof(direction));
+            //Direction = direction ?? throw new ArgumentNullException(nameof(direction));
         }
 
         public string Code { get; set; }
@@ -30,7 +30,7 @@ namespace BusInfo
         public List<string> RouteIds { get; set; }
         public string WheelchairBoarding { get; set; }
 
-        [JsonConverter(typeof(DirectionConverter))]
-        public Direction Direction { get; }
+        //[JsonConverter(typeof(DirectionConverter))]
+        //public Direction Direction { get; }
     }
 }

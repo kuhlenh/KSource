@@ -264,15 +264,6 @@ namespace BusInfo
         // Checks if given latitude and longitude are valid entries
         public static void ValidateLatLon(string lat, string lon)
         {
-            if (lat == null)
-            {
-                throw new ArgumentNullException(nameof(lat));
-            }
-            if (lon == null)
-            {
-                throw new ArgumentNullException(nameof(lon));
-            }
-
             if (lat.Length > 0 && lon.Length > 0)
             {
                 double latDouble = double.Parse(lat);
@@ -290,9 +281,15 @@ namespace BusInfo
         public static string CleanRouteName(string routeShortName) => Regex.Replace(routeShortName, "[^0-9]", "");
 
         // Uses distance formula to find distance between two points
-        public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
-        {
-            return Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2) + Math.Pow(double.Parse(lon1) - lon2, 2));
-        }
+        //<<<<<<< HEAD
+        //        public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
+        //        {
+        //            return Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2) 
+        //                   + Math.Pow(double.Parse(lon1) - lon2, 2));
+        //        }
+        //=======
+        //        public static double CalculateDistance(string a1, string a2, double b1, double b2) 
+        //            => Math.Sqrt(Math.Pow(double.Parse(a1) - b1, 2) + Math.Pow(double.Parse(a2) - b2, 2));
+        //>>>>>>> upstream
     }
 }
