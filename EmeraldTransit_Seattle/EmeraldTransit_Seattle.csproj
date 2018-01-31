@@ -16,4 +16,8 @@
     <DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="2.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BusInfo\BusInfo.csproj" />
+  </ItemGroup>
+
 </Project>

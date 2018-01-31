@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27318.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmeraldTransit_Seattle", "EmeraldTransit_Seattle\EmeraldTransit_Seattle.csproj", "{92F240FA-0339-42F8-B42D-785D0EDF066D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusInfo", "BusInfo\BusInfo.csproj", "{E5794CC3-B98E-41D7-B5C8-CAD7D9DA45AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusInfoTests", "BusInfoTests\BusInfoTests.csproj", "{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{92F240FA-0339-42F8-B42D-785D0EDF066D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92F240FA-0339-42F8-B42D-785D0EDF066D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92F240FA-0339-42F8-B42D-785D0EDF066D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5794CC3-B98E-41D7-B5C8-CAD7D9DA45AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5794CC3-B98E-41D7-B5C8-CAD7D9DA45AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5794CC3-B98E-41D7-B5C8-CAD7D9DA45AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5794CC3-B98E-41D7-B5C8-CAD7D9DA45AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
