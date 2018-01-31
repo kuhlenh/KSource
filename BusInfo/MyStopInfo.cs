@@ -150,8 +150,8 @@ namespace BusInfo
         {
             BusHelpers.ValidateLatLon(lat, lon);
             // find the route object for the given name and the closest stop for that route
-            (Route route, Stop stop) = await GetRouteAndStopForLocation(routeShortName, lat, lon);
-            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(stop.Id, route.ShortName);
+            (Route route, Stop stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
+            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(info.stop.Id, info.route.ShortName);
             IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                                                .AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
             // Convert from UTC to user's timezone
@@ -281,15 +281,15 @@ namespace BusInfo
         public static string CleanRouteName(string routeShortName) => Regex.Replace(routeShortName, "[^0-9]", "");
 
         // Uses distance formula to find distance between two points
-        //<<<<<<< HEAD
-        //        public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
-        //        {
-        //            return Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2) 
-        //                   + Math.Pow(double.Parse(lon1) - lon2, 2));
-        //        }
-        //=======
-        //        public static double CalculateDistance(string a1, string a2, double b1, double b2) 
-        //            => Math.Sqrt(Math.Pow(double.Parse(a1) - b1, 2) + Math.Pow(double.Parse(a2) - b2, 2));
-        //>>>>>>> upstream
+<<<<<<< HEAD
+                public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
+        {
+            return Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2)
+                   + Math.Pow(double.Parse(lon1) - lon2, 2));
+        }
+=======
+                public static double CalculateDistance(string a1, string a2, double b1, double b2)
+                    => Math.Sqrt(Math.Pow(double.Parse(a1) - b1, 2) + Math.Pow(double.Parse(a2) - b2, 2));
+>>>>>>> upstream
     }
 }
