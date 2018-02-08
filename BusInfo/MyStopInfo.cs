@@ -146,7 +146,7 @@ namespace BusInfo
 
         // Finds the closest stop for the given route name and gets arrival data for that stop
         // Returns a list of DateTimes for the timezone of the given lat/lon
-        public async Task<List<DateTime>>  GetArrivalTimesForRouteName(string routeShortName, string lat, string lon)
+        public async Task<List<DateTime>> GetArrivalTimesForRouteName(string routeShortName, string lat, string lon)
         {
             BusHelpers.ValidateLatLon(lat, lon);
             // find the route object for the given name and the closest stop for that route
@@ -283,15 +283,10 @@ namespace BusInfo
         public static string CleanRouteName(string routeShortName) => Regex.Replace(routeShortName, "[^0-9]", "");
 
         // Uses distance formula to find distance between two points
-<<<<<<< HEAD
-                public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
+        public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
         {
             return Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2)
                    + Math.Pow(double.Parse(lon1) - lon2, 2));
         }
-=======
-                public static double CalculateDistance(string a1, string a2, double b1, double b2)
-                    => Math.Sqrt(Math.Pow(double.Parse(a1) - b1, 2) + Math.Pow(double.Parse(a2) - b2, 2));
->>>>>>> upstream
     }
 }
