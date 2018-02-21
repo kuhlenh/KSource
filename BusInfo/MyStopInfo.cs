@@ -177,7 +177,6 @@ namespace BusInfo
             {
                 throw e;
             }
-            return TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
         }
 
         public async Task<List<ArrivalsAndDeparture>> GetArrivalsAndDepartures(string stopId, string routeShortName)
