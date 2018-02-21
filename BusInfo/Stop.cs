@@ -29,6 +29,8 @@ namespace BusInfo
         public string Name { get; set; }
         public List<string> RouteIds { get; set; }
         public string WheelchairBoarding { get; set; }
+
+        [JsonConverter(typeof(DirectionConverter))]
         public Direction Direction { get; }
     }
 }
