@@ -18,7 +18,7 @@ namespace BusInfo
             Name = name;
             RouteIds = routeIds;
             WheelchairBoarding = wheelchairBoarding;
-            Direction = direction;
+            Direction = direction ?? throw new ArgumentNullException(nameof(direction));
         }
 
         public string Code { get; set; }
