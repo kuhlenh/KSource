@@ -248,6 +248,7 @@ namespace BusInfo
                             if (rId.ToString() == route.Id)
                             {
                                 stopsForRoute.Add(s.ToObject<Stop>());
+                                stopsForRoute.Add(s.ToObject<Stop>());
                             }
                         }
                     }
