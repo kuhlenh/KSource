@@ -10,15 +10,7 @@ namespace BusInfo
 
 		public Direction(string v)
 		{
-<<<<<<< HEAD
-            if (v == null)
-            {
-                throw new ArgumentNullException(nameof(v));
-            }
-            this.Vector = v;
-=======
 			this.Vector = v ?? throw new ArgumentNullException(nameof(v));
->>>>>>> upstream
 		}
 	}
 
