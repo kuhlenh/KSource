@@ -8,7 +8,7 @@ namespace BusInfo
     {
         public Stop(
             string code, string id, double lat, int locationType, double lon,
-            string name, List<string> routeIds, string wheelchairBoarding)
+            string name, List<string> routeIds, string wheelchairBoarding, Direction direction)
         {
             Code = code;
             Id = id;
