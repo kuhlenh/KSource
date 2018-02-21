@@ -18,6 +18,7 @@ namespace BusInfo
             Name = name;
             RouteIds = routeIds;
             WheelchairBoarding = wheelchairBoarding;
+            Direction = direction;
         }
 
         public string Code { get; set; }
@@ -28,5 +29,6 @@ namespace BusInfo
         public string Name { get; set; }
         public List<string> RouteIds { get; set; }
         public string WheelchairBoarding { get; set; }
+        public Direction Direction { get; }
     }
 }
