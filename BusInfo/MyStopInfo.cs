@@ -150,7 +150,7 @@ namespace BusInfo
         {
             BusHelpers.ValidateLatLon(lat, lon);
             // find the route object for the given name and the closest stop for that route
-            (Route, Stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
+            (Route route, Stop stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
 
             List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(info.Item2.Id, info.Item1.ShortName);
 
