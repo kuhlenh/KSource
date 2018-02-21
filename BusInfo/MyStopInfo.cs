@@ -152,9 +152,9 @@ namespace BusInfo
             // find the route object for the given name and the closest stop for that route
             (Route, Stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
 
-            var arrivalData = await GetArrivalsAndDepartures(info.Item2.Id, info.Item1.ShortName);
+            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(info.Item2.Id, info.Item1.ShortName);
 
-            var UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+            IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                                                .AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
             // Convert from UTC to user's timezone
             TimeZoneInfo timeZoneInfo = await GetTimeZoneInfoAsync(lat, lon);
