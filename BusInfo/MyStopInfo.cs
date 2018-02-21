@@ -150,9 +150,9 @@ namespace BusInfo
         {
             BusHelpers.ValidateLatLon(lat, lon);
             // find the route object for the given name and the closest stop for that route
-            (Route route, Stop stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
+            (Route route, Stop stop) = await GetRouteAndStopForLocation(routeShortName, lat, lon);
 
-            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(info.stop.Id, info.route.ShortName);
+            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(stop.Id, route.ShortName);
 
             IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                                                .AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
