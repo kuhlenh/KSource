@@ -23,7 +23,7 @@ namespace UnitTestProject
             var expectedRoute = new Route("40", "", "Redmond Seattle", "40_100236", "Redmond - Seattle", "545",
                                           "", 3, "http://www.soundtransit.org/Schedules/ST-Express-Bus/545");
             var expectedStop = new Stop("700", "1_700", 47.610951, 0, -122.33725, "4th Ave & Pike St",
-                                        new List<string>(), "UNKNOWN");
+                                        new List<string>(), "UNKNOWN", new Direction("NW"));
 
             Assert.AreEqual(expectedStop.Id, actual.Item2.Id);
             Assert.AreEqual(expectedRoute.Id, actual.Item1.Id);

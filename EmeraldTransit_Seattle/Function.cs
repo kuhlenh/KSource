@@ -10,7 +10,7 @@ using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Amazon.Lambda.Core;
-using BusInfo;
+//using BusInfo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -74,7 +74,9 @@ namespace EmeraldTransit_Seattle
                         innerResponse = new PlainTextOutputSpeech();
                         string value = intentRequest.Intent.Slots["RouteName"].Value;
                         var (lat, lon) = await GetLatLonForUserLocation(input.Context.System, log);
-                        MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
+                        //MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
+                        int MyStopZebra = 7;
+                        
                         var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(value, lat, lon);
                         (innerResponse as PlainTextOutputSpeech).Text = GetRouteName($"v:{value}");
                         break;

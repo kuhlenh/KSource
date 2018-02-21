@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BusInfo
@@ -150,11 +149,11 @@ namespace BusInfo
         {
             BusHelpers.ValidateLatLon(lat, lon);
             // find the route object for the given name and the closest stop for that route
-            (Route, Stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
+            (Route route, Stop stop) = await GetRouteAndStopForLocation(routeShortName, lat, lon);
 
-            var arrivalData = await GetArrivalsAndDepartures(info.Item2.Id, info.Item1.ShortName);
+            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(stop.Id, route.ShortName);
 
-            var UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+            IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
                                                .AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
             // Convert from UTC to user's timezone
             TimeZoneInfo timeZoneInfo = await GetTimeZoneInfoAsync(lat, lon);
@@ -177,7 +176,6 @@ namespace BusInfo
             {
                 throw e;
             }
-            return TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
         }
 
         public async Task<List<ArrivalsAndDeparture>> GetArrivalsAndDepartures(string stopId, string routeShortName)
@@ -257,36 +255,6 @@ namespace BusInfo
                 }
             }
             return (null, null);
-        }
-    }
-
-
-    public static class BusHelpers
-    {
-        // Checks if given latitude and longitude are valid entries
-        public static void ValidateLatLon(string lat, string lon)
-        {
-            if (lat.Length > 0 && lon.Length > 0)
-            {
-                double latDouble = double.Parse(lat);
-                double lonDouble = double.Parse(lon);
-                if (!(latDouble >= -90) || !(latDouble <= 90) || !(lonDouble >= -180) || !(lonDouble <= 180))
-                    throw new ArgumentException("Not a valid latitude or longitude.");
-            }
-            else
-            {
-                throw new ArgumentException("Not a valid latitude or longitude.");
-            }
-        }
-
-        // Removes the identifier from route name, e.g., ###E for Express routes
-        public static string CleanRouteName(string routeShortName) => Regex.Replace(routeShortName, "[^0-9]", "");
-
-        // Uses distance formula to find distance between two points
-        public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
-        {
-            return Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2)
-                   + Math.Pow(double.Parse(lon1) - lon2, 2));
         }
     }
 }
