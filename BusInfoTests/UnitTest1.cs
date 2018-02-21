@@ -37,6 +37,14 @@ namespace UnitTestProject
         }
 
         [TestMethod]
+        public async Task TestGetTimeZoneInfoAsync()
+        {
+            var actual = await busInfo.GetTimeZoneInfoAsync(conventionCenter.lat, conventionCenter.lon);
+
+            //await Assert.AreEqual(3, 3);
+        }
+
+        [TestMethod]
         public async Task TestGetArrivals()
         {
             var actual = await busInfo.GetArrivalTimesForRouteName(_busRoute, conventionCenter.lat, conventionCenter.lon);

@@ -10,6 +10,7 @@ using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Amazon.Lambda.Core;
+using BusInfo;
 //using BusInfo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -31,8 +32,6 @@ namespace EmeraldTransit_Seattle
         /// <returns></returns>
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
-            //var r = GetResult(new { X = 19, Y = new { input } });
-
             //create a response to return
             SkillResponse response = new SkillResponse();
             response.Response = new ResponseBody();
@@ -73,12 +72,12 @@ namespace EmeraldTransit_Seattle
                         log.LogLine($"Intent Requested {intentRequest.Intent.Name}");
                         innerResponse = new PlainTextOutputSpeech();
                         string value = intentRequest.Intent.Slots["RouteName"].Value;
-                        var (lat, lon) = await GetLatLonForUserLocation(input.Context.System, log);
-                        //MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
-                        int MyStopZebra = 7;
-                        
+                        var location = await GetLatLonForUserLocation(input.Context.System, log);
+                        log.LogLine($"System {input.Context.System}");
+                        var (lat, lon) = ((location.Item1.Length != 0) && (location.Item2.Length !=0)) ? location : ("47.611959", "-122.332893");
+                        MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
                         var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(value, lat, lon);
-                        (innerResponse as PlainTextOutputSpeech).Text = GetRouteName($"v:{value}");
+                        (innerResponse as PlainTextOutputSpeech).Text = GetRouteName($"input:{input.Context.System}, route:{value}, lat: {lat}, lon: {lon}");
                         break;
                     default:
                         log.LogLine($"Unknown intent: " + intentRequest.Intent.Name);
@@ -155,4 +154,6 @@ namespace EmeraldTransit_Seattle
 
 
     }
+
+
 }

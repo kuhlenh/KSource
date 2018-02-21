@@ -7,7 +7,7 @@ namespace BusInfo
     public class TimeZoneConverter : ITimeZoneConverter
     {
         HttpClient http = new HttpClient();
-        private const string Key = "demo";
+        private const string Key = "AIzaSyAKLwQo-xS-a7HChxZDjBvxHxyo0vCj8RE";
 
         public async Task<string> GetTimeZoneJsonFromLatLonAsync(string lat, string lon)
         {

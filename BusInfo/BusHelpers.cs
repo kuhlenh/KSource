@@ -23,11 +23,11 @@ namespace BusInfo
                 double latDouble = double.Parse(lat);
                 double lonDouble = double.Parse(lon);
                 if (!(latDouble >= -90) || !(latDouble <= 90) || !(lonDouble >= -180) || !(lonDouble <= 180))
-                    throw new ArgumentException("Not a valid latitude or longitude.");
+                    throw new ArgumentException("Exceeds boundaries. Not a valid latitude or longitude.");
             }
             else
             {
-                throw new ArgumentException("Not a valid latitude or longitude.");
+                throw new ArgumentException("You are missing latitude and longitude.");
             }
         }
 

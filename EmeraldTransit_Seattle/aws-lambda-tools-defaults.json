@@ -16,5 +16,6 @@
     "function-handler"     : "EmeraldTransit_Seattle::EmeraldTransit_Seattle.Function::FunctionHandler",
     "function-name"        : "EmeraldTransitFunctionEndpoint",
     "function-role"        : "arn:aws:iam::591043686645:role/lambda_exec_EmeraldTransitFunctionEndpoint",
-    "environment-variables" : ""
+    "environment-variables" : "",
+    "tracing-mode"          : "PassThrough"
 }

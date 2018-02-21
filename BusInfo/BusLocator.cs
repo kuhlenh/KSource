@@ -6,7 +6,7 @@ namespace BusInfo
     public class BusLocator : IBusLocator
     {
         HttpClient http = new HttpClient();
-        private const string Key = "TEST";
+        private const string Key = "b5e9eb4f-d3f1-4d68-9ccf-4272385feb06";
 
         public async Task<string> GetJsonForArrivals(string stopId)
         {
