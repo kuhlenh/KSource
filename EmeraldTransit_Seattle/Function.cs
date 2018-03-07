@@ -104,12 +104,12 @@ namespace EmeraldTransit_Seattle
             http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await http.SendAsync(request);
+            var response = await http.SendAsync(request).ConfigureAwait(false);
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 log.LogLine($"content:{response.Content}");
-                var resp = await response.Content.ReadAsStringAsync();
+                var resp = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 log.LogLine($"Deserialization: {resp}");
                 var jsonAddress = JObject.Parse(resp);
                 var street = jsonAddress["addressLine1"];
@@ -117,20 +117,24 @@ namespace EmeraldTransit_Seattle
                 var state = jsonAddress["state"];
                 var googleKey = "";
                 var googleUrl = $"https://maps.googleapis.com/maps/api/geocode/json?address={street},{city},+{state}&key={googleKey}";
-                var googleResponse = await http.GetAsync(googleUrl);
+                var googleResponse = await http.GetAsync(googleUrl).ConfigureAwait(false);
                 if (!googleResponse.IsSuccessStatusCode)
                 {
                     return ("47.611959", "-122.332893");
                 }
-                var json = await response.Content.ReadAsStringAsync();
+                var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var results = JObject.Parse(json);
                 var lat = results["results"]["geometry"]["location"]["latitude"].ToString();
                 var lon = results["results"]["geometry"]["location"]["longitude"].ToString();
+
                 return (lat, lon);
 
             }
 
-
+            http.Dispose();
+            request.Dispose();
+            response.Dispose();
+            
             return ("", "");
 
         }
