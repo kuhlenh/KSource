@@ -258,7 +258,7 @@ namespace BusInfo
     }
 
 
-    public static class BusHelpers
+    public class BusHelpers
     {
         // Checks if given latitude and longitude are valid entries
         public static void ValidateLatLon(string lat, string lon)
