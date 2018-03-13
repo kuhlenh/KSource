@@ -5,9 +5,14 @@ VisualStudioVersion = 15.0.27318.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmeraldTransit_Seattle", "EmeraldTransit_Seattle\EmeraldTransit_Seattle.csproj", "{92F240FA-0339-42F8-B42D-785D0EDF066D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusInfo", "BusInfo\BusInfo.csproj", "{E5794CC3-B98E-41D7-B5C8-CAD7D9DA45AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusInfo", "BusInfo\BusInfo.csproj", "{E5794CC3-B98E-41D7-B5C8-CAD7D9DA45AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusInfoTests", "BusInfoTests\BusInfoTests.csproj", "{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusInfoTests", "BusInfoTests\BusInfoTests.csproj", "{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EBCE644A-75D7-407E-BD63-63B09884BECE}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
