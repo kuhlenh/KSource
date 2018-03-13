@@ -175,6 +175,8 @@ namespace BusInfo
             {
                 throw e;
             }
+
+            return TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
         }
 
         public async Task<List<ArrivalsAndDeparture>> GetArrivalsAndDepartures(string stopId, string routeShortName)
@@ -258,21 +260,11 @@ namespace BusInfo
     }
 
 
-    public static class BusHelpers
+    public class BusHelpers
     {
         // Checks if given latitude and longitude are valid entries
         public static void ValidateLatLon(string lat, string lon)
         {
-            if (lat == null)
-            {
-                throw new ArgumentNullException(nameof(lat));
-            }
-
-            if (lon == null)
-            {
-                throw new ArgumentNullException(nameof(lon));
-            }
-
             if (lat.Length > 0 && lon.Length > 0)
             {
                 double latDouble = double.Parse(lat);
