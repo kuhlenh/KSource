@@ -93,46 +93,49 @@ namespace EmeraldTransit_Seattle
 
         private async Task<(string, string)> GetLatLonForUserLocation(AlexaSystem system, ILambdaLogger log)
         {
-            HttpClient http = new HttpClient();
-            var accessToken = system.ApiAccessToken;
-            var deviceId = system.Device.DeviceID;
-            log.LogLine($"accessToken: {accessToken}, id:{deviceId}");
-            log.LogLine($"endpoint:{system.ApiEndpoint}");
-
-            var uri = $"https://api.amazonalexa.com/v1/devices/{deviceId}/settings/address";
-            http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-            var response = await http.SendAsync(request);
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            using (HttpClient http = new HttpClient())
             {
-                log.LogLine($"content:{response.Content}");
-                var resp = await response.Content.ReadAsStringAsync();
-                log.LogLine($"Deserialization: {resp}");
-                var jsonAddress = JObject.Parse(resp);
-                var street = jsonAddress["addressLine1"];
-                var city = jsonAddress["city"];
-                var state = jsonAddress["state"];
-                var googleKey = "";
-                var googleUrl = $"https://maps.googleapis.com/maps/api/geocode/json?address={street},{city},+{state}&key={googleKey}";
-                var googleResponse = await http.GetAsync(googleUrl);
-                if (!googleResponse.IsSuccessStatusCode)
+                
+                var accessToken = system.ApiAccessToken;
+                var deviceId = system.Device.DeviceID;
+                log.LogLine($"accessToken: {accessToken}, id:{deviceId}");
+                log.LogLine($"endpoint:{system.ApiEndpoint}");
+
+                var uri = $"https://api.amazonalexa.com/v1/devices/{deviceId}/settings/address";
+                http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+                var response = await http.SendAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return ("47.611959", "-122.332893");
+                    log.LogLine($"content:{response.Content}");
+                    var resp = await response.Content.ReadAsStringAsync();
+                    log.LogLine($"Deserialization: {resp}");
+                    var jsonAddress = JObject.Parse(resp);
+                    var street = jsonAddress["addressLine1"];
+                    var city = jsonAddress["city"];
+                    var state = jsonAddress["state"];
+                    var googleKey = "";
+                    var googleUrl = $"https://maps.googleapis.com/maps/api/geocode/json?address={street},{city},+{state}&key={googleKey}";
+                    var googleResponse = await http.GetAsync(googleUrl);
+                    if (!googleResponse.IsSuccessStatusCode)
+                    {
+                        return ("47.611959", "-122.332893");
+                    }
+                    var json = await response.Content.ReadAsStringAsync();
+                    var results = JObject.Parse(json);
+                    var lat = results["results"]["geometry"]["location"]["latitude"].ToString();
+                    var lon = results["results"]["geometry"]["location"]["longitude"].ToString();
+                    return (lat, lon);
+
                 }
-                var json = await response.Content.ReadAsStringAsync();
-                var results = JObject.Parse(json);
-                var lat = results["results"]["geometry"]["location"]["latitude"].ToString();
-                var lon = results["results"]["geometry"]["location"]["longitude"].ToString();
-                return (lat, lon);
+
+
+                return ("", "");
 
             }
-
-
-            return ("", "");
-
         }
 
         public string GetRouteName(string route) => route;

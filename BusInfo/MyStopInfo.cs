@@ -199,7 +199,7 @@ namespace BusInfo
                         ArrivalsAndDeparture x = s.ToObject<ArrivalsAndDeparture>();
                         arrivalsAndDeparture.Add(x);
                     }
-                }
+                } 
             }
             return arrivalsAndDeparture;
         }
@@ -258,7 +258,7 @@ namespace BusInfo
     }
 
 
-    public class BusHelpers
+    public static class BusHelpers
     {
         // Checks if given latitude and longitude are valid entries
         public static void ValidateLatLon(string lat, string lon)
@@ -267,6 +267,7 @@ namespace BusInfo
             {
                 throw new ArgumentNullException(nameof(lat));
             }
+
             if (lon == null)
             {
                 throw new ArgumentNullException(nameof(lon));
