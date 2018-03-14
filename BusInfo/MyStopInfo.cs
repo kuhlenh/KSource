@@ -146,7 +146,7 @@ namespace BusInfo
 
         // Finds the closest stop for the given route name and gets arrival data for that stop
         // Returns a list of DateTimes for the timezone of the given lat/lon
-        public async Task<List<DateTime>>  GetArrivalTimesForRouteName(string routeShortName, string lat, string lon)
+        public async Task<List<DateTime>> GetArrivalTimesForRouteName(string routeShortName, string lat, string lon)
         {
             BusHelpers.ValidateLatLon(lat, lon);
             // find the route object for the given name and the closest stop for that route
@@ -201,7 +201,7 @@ namespace BusInfo
                         ArrivalsAndDeparture x = s.ToObject<ArrivalsAndDeparture>();
                         arrivalsAndDeparture.Add(x);
                     }
-                } 
+                }
             }
             return arrivalsAndDeparture;
         }
@@ -260,11 +260,21 @@ namespace BusInfo
     }
 
 
-    public class BusHelpers
+    public static class BusHelpers
     {
         // Checks if given latitude and longitude are valid entries
         public static void ValidateLatLon(string lat, string lon)
         {
+            if (lat == null)
+            {
+                throw new ArgumentNullException(nameof(lat));
+            }
+
+            if (lon == null)
+            {
+                throw new ArgumentNullException(nameof(lon));
+            }
+
             if (lat.Length > 0 && lon.Length > 0)
             {
                 double latDouble = double.Parse(lat);
