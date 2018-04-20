@@ -239,10 +239,11 @@ namespace BusInfo
                 if (targetRoute != null)
                 {
                     Route route = targetRoute.ToObject<Route>();
-                    JEnumerable<JToken> stops = jobject["data"]["list"].Children();
+                    var stops = jobject["data"]["list"].Children().ToList();
                     List<Stop> stopsForRoute = new List<Stop>();
-                    foreach (JToken s in stops)
+                    for (var i = 0; i < stops.Count; i++)
                     {
+                        var s = stops[i];
                         JToken routeIds = s["routeIds"];
                         foreach (JToken rId in routeIds)
                         {
