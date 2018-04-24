@@ -78,10 +78,8 @@ namespace EmeraldTransit_Seattle
                         innerResponse = new PlainTextOutputSpeech();
                         string value = intentRequest.Intent.Slots["RouteName"].Value;
                         var location = await GetLatLonForUserLocation(input.Context.System, log);
-                        var (lat, lon) = ((location.Item1.Length != 0) && (location.Item2.Length != 0)) ? location : ("47.611959", "-122.332893");
-                        log.LogLine("lat :" + lat);
-                        log.LogLine("lon: " + lon);
-
+                        var (lat, lon) = ((location.Item1.Length != 0) && (location.Item2.Length != 0)) ? location : ("40.611959", "-120.332893");
+                        //("47.611959", "-122.332893")
                         MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
                         var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(value, lat, lon);
                         StringBuilder sb = new StringBuilder();
@@ -108,25 +106,8 @@ namespace EmeraldTransit_Seattle
 
         private async Task<(string, string)> GetLatLonForUserLocation(AlexaSystem system, ILambdaLogger log)
         {
-            //HttpClient client = new HttpClient() { BaseAddress = new Uri("https://api.amazonalexa.com/") };
             var accessToken = system.ApiAccessToken;
             var deviceId = system.Device.DeviceID;
-            log.LogLine($"accessToken: {accessToken}");
-            
-            log.LogLine($"endpoint:{system.ApiEndpoint}");
-
-            //var /*baseUri*/ = "https://api.amazonalexa.com/";
-            //var uri = $"https://api.amazonalexa.com/v1/devices/{deviceId}/settings/address";
-            //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-
-            //deviceId = "G0B0H5086254019K";
-            // get rid of any defaults
-
-            //// make sure we're only asking for JSON
-            //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
 
             HttpClient client = new HttpClient() { BaseAddress = new Uri("https://api.amazonalexa.com") };
             client.DefaultRequestHeaders.Accept.Clear();
@@ -135,43 +116,28 @@ namespace EmeraldTransit_Seattle
             var uri = $"https://api.amazonalexa.com/v1/devices/{deviceId}/settings/address";
             
             var response = await client.GetAsync(uri);
-            // Set the authorization header using our bot's directline key
 
-            
+            log.LogLine("\n request message: " + response.RequestMessage);
+            log.LogLine("\n code: " + response.StatusCode);
 
-            //var response = await client.GetStringAsync($"/v1/devices/{deviceId}/settings/address").ConfigureAwait(false);
-            log.LogLine("\n\nrqeeust message: " + response.RequestMessage);
-
-            //log.LogLine("response header:" + client.DefaultRequestHeaders.Authorization);
-            //log.LogLine("response header:" + client.DefaultRequestHeaders.Accept.ToString());
-
-            //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-            //var response = await client.SendAsync(request);
-            //log.LogLine("response status: " + response.StatusCode);
-            //if (response.StatusCode == HttpStatusCode.OK)
-            //{
-            //    log.LogLine($"content:{response.Content}");
-            //    var resp = await response.Content.ReadAsStringAsync();
-            //    log.LogLine($"Deserialization: {resp}");
-            //    var jsonAddress = JObject.Parse(resp);
-            //    var street = jsonAddress["addressLine1"];
-            //    var city = jsonAddress["city"];
-            //    var state = jsonAddress["state"];
-            //    var googleKey = "";
-            //    var googleUrl = $"https://maps.googleapis.com/maps/api/geocode/json?address={street},{city},+{state}&key={googleKey}";
-            //    var googleResponse = await client.GetAsync(googleUrl);
-            //    if (!googleResponse.IsSuccessStatusCode)
-            //    {
-            //        return ("47.611959", "-122.332893");
-            //    }
-            //    var json = await response.Content.ReadAsStringAsync();
-            //    var results = JObject.Parse(json);
-            //    var lat = results["results"]["geometry"]["location"]["latitude"].ToString();
-            //    var lon = results["results"]["geometry"]["location"]["longitude"].ToString();
-            //    return (lat, lon);
-
-            //}
-
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var json = JsonConvert.DeserializeObject<Address>(content);
+                log.LogLine("\njson for address: " + json);
+                var key = "AIzaSyAKLwQo-xS-a7HChxZDjBvxHxyo0vCj8RE";
+                client.DefaultRequestHeaders.Clear();
+                var uriGoogle = new Uri($"https://maps.google.com/maps/api/geocode/json?key={key}&address={json.addressLine1 + "," + json.city + "," + json.stateOrRegion}&sensor=false&region={json.countryCode}");
+                var response2 = await client.GetAsync(uriGoogle);
+                if (!response2.IsSuccessStatusCode)
+                {
+                    throw new Exception("Google API failed.");
+                }
+                var json2 = await response2.Content.ReadAsStringAsync();
+                var json3 = JObject.Parse(json2);
+                log.LogLine("\ngoogle: " + json3);
+                return (json3["geometry"]["location"]["lat"].ToString(), json3["geometry"]["location"]["long"].ToString());
+            }
 
             return ("", "");
 
@@ -194,6 +160,17 @@ namespace EmeraldTransit_Seattle
         }
 
 
+    }
+    public class Address
+    {
+        public string stateOrRegion { get; set; }
+        public string city { get; set; }
+        public string countryCode { get; set; }
+        public string postalCode { get; set; }
+        public string addressLine1 { get; set; }
+        public string addressLine2 { get; set; }
+        public string addressLine3 { get; set; }
+        public string districtOrCounty { get; set; }
     }
 
 

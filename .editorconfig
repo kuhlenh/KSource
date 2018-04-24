@@ -70,7 +70,7 @@ csharp_style_conditional_delegate_call = true:suggestion
 dotnet_naming_style.sa1300_style.capitalization = first_word_upper
 dotnet_naming_symbols.sa1300_symbols.applicable_kinds = namespace,class,enum,struct,delegate,event,method,property
 dotnet_naming_symbols.sa1300_symbols.applicable_accessibilities = *
-dotnet_naming_rule.sa1300.severity = error
+dotnet_naming_rule.sa1300.severity = suggestion
 dotnet_naming_rule.sa1300.symbols = sa1300_symbols
 dotnet_naming_rule.sa1300.style = sa1300_style
 
