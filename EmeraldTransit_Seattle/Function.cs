@@ -40,10 +40,6 @@ namespace EmeraldTransit_Seattle
             IOutputSpeech innerResponse = new PlainTextOutputSpeech() { Text = "testing" };
             var log = context.Logger;
 
-
-
-
-
             Type requestType = input.GetRequestType();
             if (requestType == typeof(LaunchRequest))
             {
@@ -78,6 +74,17 @@ namespace EmeraldTransit_Seattle
                         innerResponse = new PlainTextOutputSpeech();
                         string value = intentRequest.Intent.Slots["RouteName"].Value;
                         var location = await GetLatLonForUserLocation(input.Context.System, log);
+                        if (location.Item1=="")
+                        {
+                            var resp = new AskForPermissionsConsentCard();
+                            resp.Permissions.Add(RequestedPermission.FullAddress);
+                            var speech = new SsmlOutputSpeech();
+                            speech.Ssml = "<speak>You need to enable permissions.</speak>";
+
+                            // create the card response
+                            var cardResponse = ResponseBuilder.TellWithAskForPermissionsConsentCard(speech, resp.Permissions);
+                            return cardResponse;
+                        }
                         var (lat, lon) = ((location.Item1.Length != 0) && (location.Item2.Length != 0)) ? location : ("40.611959", "-120.332893");
                         //("47.611959", "-122.332893")
                         MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
@@ -109,10 +116,10 @@ namespace EmeraldTransit_Seattle
             var accessToken = system.ApiAccessToken;
             var deviceId = system.Device.DeviceID;
 
-            HttpClient client = new HttpClient() { BaseAddress = new Uri("https://api.amazonalexa.com") };
+            HttpClient client = new HttpClient() { };
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
             var uri = $"https://api.amazonalexa.com/v1/devices/{deviceId}/settings/address";
             
             var response = await client.GetAsync(uri);
@@ -127,18 +134,23 @@ namespace EmeraldTransit_Seattle
                 log.LogLine("\njson for address: " + json);
                 var key = "AIzaSyAKLwQo-xS-a7HChxZDjBvxHxyo0vCj8RE";
                 client.DefaultRequestHeaders.Clear();
-                var uriGoogle = new Uri($"https://maps.google.com/maps/api/geocode/json?key={key}&address={json.addressLine1 + "," + json.city + "," + json.stateOrRegion}&sensor=false&region={json.countryCode}");
+                var uriGoogle = new Uri($"https://maps.google.com/maps/api/geocode/json?key={key}&address={json.addressLine1},{json.city},{json.stateOrRegion} {json.postalCode}&sensor=false&region={json.countryCode}");
                 var response2 = await client.GetAsync(uriGoogle);
                 if (!response2.IsSuccessStatusCode)
                 {
                     throw new Exception("Google API failed.");
                 }
                 var json2 = await response2.Content.ReadAsStringAsync();
-                var json3 = JObject.Parse(json2);
-                log.LogLine("\ngoogle: " + json3);
-                return (json3["geometry"]["location"]["lat"].ToString(), json3["geometry"]["location"]["long"].ToString());
+                var geocode = JsonConvert.DeserializeObject<Geocode>(json2);
+                log.LogLine("\ngoogle: " + json2);
+                return (geocode.results.FirstOrDefault().geometry.location.lat.ToString(),
+                    geocode.results.FirstOrDefault().geometry.location.lng.ToString());
             }
-
+            else
+            {
+                throw new Exception(response.StatusCode + " " + response.RequestMessage);
+            }
+       
             return ("", "");
 
         }
@@ -146,6 +158,59 @@ namespace EmeraldTransit_Seattle
         public string GetRouteName(string route) => route;
     }
 
+
+    public class AddressComponent
+    {
+        public string long_name { get; set; }
+        public string short_name { get; set; }
+        public List<string> types { get; set; }
+    }
+
+    public class Location
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Northeast
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Southwest
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Viewport
+    {
+        public Northeast northeast { get; set; }
+        public Southwest southwest { get; set; }
+    }
+
+    public class Geometry
+    {
+        public Location location { get; set; }
+        public string location_type { get; set; }
+        public Viewport viewport { get; set; }
+    }
+
+    public class Result
+    {
+        public List<AddressComponent> address_components { get; set; }
+        public string formatted_address { get; set; }
+        public Geometry geometry { get; set; }
+        public string place_id { get; set; }
+        public List<string> types { get; set; }
+    }
+
+    public class Geocode
+    {
+        public List<Result> results { get; set; }
+        public string status { get; set; }
+    }
     public class BusInfoResource
     {
         public string Language { get; set; }
