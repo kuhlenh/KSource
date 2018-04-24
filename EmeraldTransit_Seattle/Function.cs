@@ -36,7 +36,6 @@ namespace EmeraldTransit_Seattle
         /// <returns></returns>
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
-
             //create a response to return
             SkillResponse response = new SkillResponse();
             response.Response = new ResponseBody();
@@ -78,6 +77,7 @@ namespace EmeraldTransit_Seattle
                     case "GetRouteIntent":
                         log.LogLine("\nStarting GetRouteIntent..." + "\n" + intentRequest.ToString());
 
+                        innerResponse = new PlainTextOutputSpeech();
                         var consentToken = input.Context.System.ApiAccessToken;
                         log.LogLine("\nconsent token: " + consentToken);
 
@@ -94,59 +94,25 @@ namespace EmeraldTransit_Seattle
                             return response;
                         }
 
-                        //test linq
-                        List<int> c = new List<int> { 1, 2, 3, 4, 5, 6, 7 };
-                        var r = from i in c select i + 1;
-
-                        List<int> c1 = new List<int> { 1, 2, 3, 4, 5, 7 };
-                        List<int> c2 = new List<int> { 10, 30, 40, 50, 60, 70 };
-                        var r2 = from x1 in c1
-                                   join x2 in c2 on x1 equals x2 / 10
-                                   select x1 + x2;
-
-                        // ^^^^ test linq
-
+                        var time = input.Request.Timestamp;
                         var deviceId = input.Context.System.Device.DeviceID;
                         var apiEndpoint = input.Context.System.ApiEndpoint;
-
-                        //log.LogLine("\nTrying old version...");
-                        //var geocode = GetLatLonForUserLocation(input.Context.System, log);
-                        //log.LogLine("\nGeocode:" + geocode.ToString());
+                        var route = intentRequest.Intent.Slots["RouteName"].Value;
                         log.LogLine("\nTrying new version...");
+                        // get the device's location to find the nearest bus stop
                         var alexaDeviceAddressClient = new AlexaDeviceAddressClient(apiEndpoint, deviceId, consentToken);
                         var address = await alexaDeviceAddressClient.GetFullAddressAsync(log);
                         log.LogLine("==================================");
                         log.LogLine("\nAddress: " + address);
                         log.LogLine("==================================");
 
+                        // call into the Google Maps api to get geocode location
+                        var location = await GoogleMapGeocodeLocation(log, address);
 
-                        //log.LogLine($"Intent Requested {intentRequest.Intent.Name}");
-                        //innerResponse = new PlainTextOutputSpeech();
-                        //string value = intentRequest.Intent.Slots["RouteName"].Value;
-                        //var location = await GetLatLonForUserLocation(input.Context.System, log);
-                        //if (location.Item1=="")
-                        //{
-                        //    var resp = new AskForPermissionsConsentCard();
-                        //    resp.Permissions.Add(RequestedPermission.FullAddress);
-                        //    var speech = new SsmlOutputSpeech();
-                        //    speech.Ssml = "<speak>You need to enable permissions.</speak>";
-
-                        //    // create the card response
-                        //    var cardResponse = ResponseBuilder.TellWithAskForPermissionsConsentCard(speech, resp.Permissions);
-                        //    return cardResponse;
-                        //}
-                        //var (lat, lon) = ((location.Item1.Length != 0) && (location.Item2.Length != 0)) ? location : ("40.611959", "-120.332893");
-                        ////("47.611959", "-122.332893")
-                        //MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
-                        //var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(value, lat, lon);
-                        //StringBuilder sb = new StringBuilder();
-                        //sb.Append($"The next {value} comes in ");
-                        //foreach (var arrival in arrivalTimes)
-                        //{
-                        //    sb.Append(arrival + " minutes,");
-                        //}
-                        //(innerResponse as PlainTextOutputSpeech).Text = sb.ToString();
-                        //log.LogLine($"route:{value}, lat: {lat}, lon: {lon}");
+                        // call into the OBA api to get bus times
+                        var sb = await GetBusResponse(route, location);
+                        (innerResponse as PlainTextOutputSpeech).Text = sb;
+                        log.LogLine("Final output == " + sb);
                         break;
                     default:
                         log.LogLine($"\nUnknown intent: " + intentRequest.Intent.Name);
@@ -161,52 +127,39 @@ namespace EmeraldTransit_Seattle
             return response;
         }
 
-        private async Task<(string, string)> GetLatLonForUserLocation(AlexaSystem system, ILambdaLogger log)
+        private static async Task<string> GetBusResponse(string route, (string, string) location)
         {
-            var accessToken = system.ApiAccessToken;
-            var deviceId = system.Device.DeviceID;
-
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
-            var uri = $"https://api.amazonalexa.com/v1/devices/{deviceId}/settings/address";
-
-            var response = await client.GetAsync(uri);
-
-            log.LogLine("\n request message: " + response.RequestMessage);
-            log.LogLine("\n code: " + response.StatusCode);
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
+            var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(route, location.Item1, location.Item2);
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"The next {route} comes in ");
+            foreach (var arrival in arrivalTimes)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var json = JsonConvert.DeserializeObject<Address>(content);
-                log.LogLine("\njson for address: " + json);
-                var key = "AIzaSyAKLwQo-xS-a7HChxZDjBvxHxyo0vCj8RE";
-                client.DefaultRequestHeaders.Clear();
-                var uriGoogle = new Uri($"https://maps.google.com/maps/api/geocode/json?key={key}&address={json.addressLine1},{json.city},{json.stateOrRegion} {json.postalCode}&sensor=false&region={json.countryCode}");
-                var response2 = await client.GetAsync(uriGoogle);
-                if (!response2.IsSuccessStatusCode)
-                {
-                    throw new Exception("Google API failed.");
-                }
-                var json2 = await response2.Content.ReadAsStringAsync();
-                var geocode = JsonConvert.DeserializeObject<Geocode>(json2);
-                log.LogLine("\ngoogle: " + json2);
-                log.LogLine("lat " + geocode.results.FirstOrDefault().geometry.location.lat.ToString());
-                log.LogLine("lng" + geocode.results.FirstOrDefault().geometry.location.lng.ToString());
-                return (geocode.results.FirstOrDefault().geometry.location.lat.ToString(),
-                    geocode.results.FirstOrDefault().geometry.location.lng.ToString());
-            }
-            else
-            {
-                throw new Exception(response.StatusCode + " " + response.RequestMessage);
+                sb.Append(arrival + " minutes,");
             }
 
-            return ("", "");
-
+            return sb.ToString();
         }
 
-        public string GetRouteName(string route) => route;
+        private async Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
+        {
+            client.DefaultRequestHeaders.Clear();
+            var key = "AIzaSyAKLwQo-xS-a7HChxZDjBvxHxyo0vCj8RE";
+            var uriGoogle = new Uri($"https://maps.google.com/maps/api/geocode/json?key={key}&address={address}&sensor=false");
+            var responseGeocode = await client.GetAsync(uriGoogle);
+            if (!responseGeocode.IsSuccessStatusCode)
+            {
+                throw new Exception("Google Geocode API failed.");
+            }
+            var json2 = await responseGeocode.Content.ReadAsStringAsync();
+            var geocode = JsonConvert.DeserializeObject<Geocode>(json2);
+            log.LogLine("\ngoogle: " + json2);
+            var lat = geocode.results.FirstOrDefault().geometry.location.lat.ToString();
+            log.LogLine("lat " + lat);
+            var lng = geocode.results.FirstOrDefault().geometry.location.lng.ToString();
+            log.LogLine("lng" + lng);
+            return (lat, lng);
+        }
     }
 
     class AlexaDeviceAddressClient
@@ -230,7 +183,7 @@ namespace EmeraldTransit_Seattle
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConsentToken);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            var requestOptions = $"/v1/devices/{DeviceId}/settings/address/";
+            //var requestOptions = $"/v1/devices/{DeviceId}/settings/address/";
             //var uri = new Uri($"{ApiEndpoint}{requestOptions}");
             var uri = $"https://api.amazonalexa.com/v1/devices/{DeviceId}/settings/address";
 
@@ -270,83 +223,83 @@ namespace EmeraldTransit_Seattle
         }
 
 
-}
-
-public class AddressComponent
-{
-    public string long_name { get; set; }
-    public string short_name { get; set; }
-    public List<string> types { get; set; }
-}
-
-public class Location
-{
-    public double lat { get; set; }
-    public double lng { get; set; }
-}
-
-public class Northeast
-{
-    public double lat { get; set; }
-    public double lng { get; set; }
-}
-
-public class Southwest
-{
-    public double lat { get; set; }
-    public double lng { get; set; }
-}
-
-public class Viewport
-{
-    public Northeast northeast { get; set; }
-    public Southwest southwest { get; set; }
-}
-
-public class Geometry
-{
-    public Location location { get; set; }
-    public string location_type { get; set; }
-    public Viewport viewport { get; set; }
-}
-
-public class Result
-{
-    public List<AddressComponent> address_components { get; set; }
-    public string formatted_address { get; set; }
-    public Geometry geometry { get; set; }
-    public string place_id { get; set; }
-    public List<string> types { get; set; }
-}
-
-public class Geocode
-{
-    public List<Result> results { get; set; }
-    public string status { get; set; }
-}
-public class BusInfoResource
-{
-    public string Language { get; set; }
-    public string SkillName { get; set; }
-    public string HelpMessage { get; set; }
-    public string HelpReprompt { get; set; }
-    public string StopMessage { get; set; }
-
-    public BusInfoResource(string language)
-    {
-        Language = language ?? throw new ArgumentNullException(nameof(language));
     }
-}
-public class Address
-{
-    public string stateOrRegion { get; set; }
-    public string city { get; set; }
-    public string countryCode { get; set; }
-    public string postalCode { get; set; }
-    public string addressLine1 { get; set; }
-    public string addressLine2 { get; set; }
-    public string addressLine3 { get; set; }
-    public string districtOrCounty { get; set; }
+
+    public class AddressComponent
+    {
+        public string long_name { get; set; }
+        public string short_name { get; set; }
+        public List<string> types { get; set; }
+    }
+
+    public class Location
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Northeast
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Southwest
+    {
+        public double lat { get; set; }
+        public double lng { get; set; }
+    }
+
+    public class Viewport
+    {
+        public Northeast northeast { get; set; }
+        public Southwest southwest { get; set; }
+    }
+
+    public class Geometry
+    {
+        public Location location { get; set; }
+        public string location_type { get; set; }
+        public Viewport viewport { get; set; }
+    }
+
+    public class Result
+    {
+        public List<AddressComponent> address_components { get; set; }
+        public string formatted_address { get; set; }
+        public Geometry geometry { get; set; }
+        public string place_id { get; set; }
+        public List<string> types { get; set; }
+    }
+
+    public class Geocode
+    {
+        public List<Result> results { get; set; }
+        public string status { get; set; }
+    }
+    public class BusInfoResource
+    {
+        public string Language { get; set; }
+        public string SkillName { get; set; }
+        public string HelpMessage { get; set; }
+        public string HelpReprompt { get; set; }
+        public string StopMessage { get; set; }
+
+        public BusInfoResource(string language)
+        {
+            Language = language ?? throw new ArgumentNullException(nameof(language));
+        }
+    }
+    public class Address
+    {
+        public string stateOrRegion { get; set; }
+        public string city { get; set; }
+        public string countryCode { get; set; }
+        public string postalCode { get; set; }
+        public string addressLine1 { get; set; }
+        public string addressLine2 { get; set; }
+        public string addressLine3 { get; set; }
+        public string districtOrCounty { get; set; }
 
         public override string ToString()
         {
