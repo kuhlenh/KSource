@@ -145,27 +145,36 @@ namespace BusInfo
 
         // Finds the closest stop for the given route name and gets arrival data for that stop
         // Returns a list of DateTimes for the timezone of the given lat/lon
-        public async Task<List<double>> GetArrivalTimesForRouteName(string routeShortName, string lat, string lon)
+        public async Task<List<double>> GetArrivalTimesForRouteName(string routeShortName, string lat, string lon, DateTime time)
         {
             BusHelpers.ValidateLatLon(lat, lon);
+
             // find the route object for the given name and the closest stop for that route
             (Route route, Stop stop) = await GetRouteAndStopForLocation(routeShortName, lat, lon);
             List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(stop.Id, route.ShortName);
 
             //new work
-            var utcnow = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
-            var ms = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                                               .AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime)));
-            var ms2 = arrivalData.Select(a => Convert.ToDouble(a.PredictedArrivalTime) - utcnow);
+            var utcnow = (Int32)(time.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            var universalTime = time.ToUniversalTime();
+            var ms = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime)));
 
             var timeUntil = new List<double>();
-            foreach (var arrival in arrivalData)
+            foreach(var m in ms)
             {
-                var predicted = Convert.ToDouble(arrival.PredictedArrivalTime);
-                double delta = predicted - utcnow;
-                var minutes = TimeSpan.FromMilliseconds(delta).TotalMinutes;
-                timeUntil.Add(minutes);
+                var delta = m - universalTime;
+                var min = delta.TotalMinutes;
             }
+
+            //var ms2 = arrivalData.Select(a => Convert.ToDouble(a.PredictedArrivalTime) - utcnow).Take(3);
+            //var ms3 = ms.Select(a => (a - time).TotalMinutes).Take(3);
+
+            //foreach (var arrival in arrivalData)
+            //{
+            //    var predicted = Convert.ToDouble(arrival.PredictedArrivalTime);
+            //    double delta = predicted - utcnow;
+            //    var minutes = TimeSpan.FromMilliseconds(delta).TotalMinutes;
+            //    timeUntil.Add(minutes);
+            //}
 
             //IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
             //.AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);

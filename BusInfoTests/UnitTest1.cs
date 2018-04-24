@@ -15,6 +15,7 @@ namespace UnitTestProject
         (string lat, string lon) conventionCenter = ("47.611959", "-122.332893");
         (string lat, string lon) microsoftCampus = ("47.639905", "-122.125485");
         string _busRoute = "545";
+        DateTime date = DateTime.Parse("5/1/2017, 4:30:00 PM");
 
         [TestMethod]
         public async Task TestGetRouteAndStopForLocation()
@@ -47,11 +48,16 @@ namespace UnitTestProject
         [TestMethod]
         public async Task TestGetArrivals()
         {
-            var actual = await busInfo.GetArrivalTimesForRouteName(_busRoute, conventionCenter.lat, conventionCenter.lon);
+            var actual = await busInfo.GetArrivalTimesForRouteName(_busRoute, conventionCenter.lat, conventionCenter.lon, date);
             var expected = new List<DateTime>();
             expected.Add(DateTime.Parse("5/1/2017, 4:33:42 PM"));
             expected.Add(DateTime.Parse("5/1/2017, 4:35:12 PM"));
             expected.Add(DateTime.Parse("5/1/2017, 4:43:46 PM"));
+
+            var expected2 = new List<double>(); // DateTime.Parse("5/1/2017, 4:30:00 PM");
+            expected2.Add(3.7); //3min 42s
+            expected2.Add(5.2); //5 min 12s
+            expected2.Add(13.8); //13min 46s
 
             Assert.AreEqual(3, actual.Count);
             CollectionAssert.AreEqual(expected, actual);
@@ -61,7 +67,7 @@ namespace UnitTestProject
         public async Task TestGetArrivalsInvalidLatLon()
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
-                                    await busInfo.GetArrivalTimesForRouteName(_busRoute, "-100.0000", "200.0000"),
+                                    await busInfo.GetArrivalTimesForRouteName(_busRoute, "-100.0000", "200.0000", date),
                                     "Not a valid latitude or longitude.");
         }
 
@@ -69,7 +75,7 @@ namespace UnitTestProject
         public async Task TestGetArrivalsNull()
         {
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
-                                    await busInfo.GetArrivalTimesForRouteName(_busRoute, null, null));
+                                    await busInfo.GetArrivalTimesForRouteName(_busRoute, null, null, date));
         }
     }
 }

@@ -110,7 +110,7 @@ namespace EmeraldTransit_Seattle
                         var location = await GoogleMapGeocodeLocation(log, address);
 
                         // call into the OBA api to get bus times
-                        var sb = await GetBusResponse(route, location);
+                        var sb = await GetBusResponse(route, location, time);
                         (innerResponse as PlainTextOutputSpeech).Text = sb;
                         log.LogLine("Final output == " + sb);
                         break;
@@ -127,10 +127,10 @@ namespace EmeraldTransit_Seattle
             return response;
         }
 
-        private static async Task<string> GetBusResponse(string route, (string, string) location)
+        private static async Task<string> GetBusResponse(string route, (string, string) location, DateTime time)
         {
             MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
-            var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(route, location.Item1, location.Item2);
+            var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(route, location.Item1, location.Item2, time);
             StringBuilder sb = new StringBuilder();
             sb.Append($"The next {route} comes in ");
             foreach (var arrival in arrivalTimes)
