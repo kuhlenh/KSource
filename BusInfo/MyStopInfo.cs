@@ -145,21 +145,37 @@ namespace BusInfo
 
         // Finds the closest stop for the given route name and gets arrival data for that stop
         // Returns a list of DateTimes for the timezone of the given lat/lon
-        public async Task<List<DateTime>> GetArrivalTimesForRouteName(string routeShortName, string lat, string lon)
+        public async Task<List<double>> GetArrivalTimesForRouteName(string routeShortName, string lat, string lon)
         {
             BusHelpers.ValidateLatLon(lat, lon);
             // find the route object for the given name and the closest stop for that route
             (Route route, Stop stop) = await GetRouteAndStopForLocation(routeShortName, lat, lon);
-
             List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(stop.Id, route.ShortName);
 
-            IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                                               .AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
-            // Convert from UTC to user's timezone
-            TimeZoneInfo timeZoneInfo = await GetTimeZoneInfoAsync(lat, lon);
-            IEnumerable<DateTime> UserTimeData = UtcData.Select(d => TimeZoneInfo.ConvertTimeFromUtc(d, timeZoneInfo));
+            //new work
+            var utcnow = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            var ms = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                                               .AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime)));
+            var ms2 = arrivalData.Select(a => Convert.ToDouble(a.PredictedArrivalTime) - utcnow);
 
-            return UserTimeData.ToList();
+            var timeUntil = new List<double>();
+            foreach (var arrival in arrivalData)
+            {
+                var predicted = Convert.ToDouble(arrival.PredictedArrivalTime);
+                double delta = predicted - utcnow;
+                var minutes = TimeSpan.FromMilliseconds(delta).TotalMinutes;
+                timeUntil.Add(minutes);
+            }
+
+            //IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+            //.AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
+            // Convert from UTC to user's timezone
+            //TimeZoneInfo timeZoneInfo = await GetTimeZoneInfoAsync(lat, lon);
+            //IEnumerable<DateTime> UserTimeData = UtcData.Select(d => TimeZoneInfo.ConvertTimeFromUtc(d, timeZoneInfo));
+
+            //return UserTimeData.ToList();
+            //return UtcData.ToList();
+            return timeUntil;
         }
 
         public async Task<TimeZoneInfo> GetTimeZoneInfoAsync(string lat, string lon)
@@ -169,12 +185,14 @@ namespace BusInfo
             try
             {
                 string olsonTimeZone = _olsonWindowsTimes[timeZoneId];
+
                 TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(olsonTimeZone);
                 return timeZoneInfo;
             }
             catch (Exception e)
             {
-                throw e;
+                return TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+                //throw e;
             }
         }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Alexa.NET;
 using Alexa.NET.Request;
@@ -73,11 +74,20 @@ namespace EmeraldTransit_Seattle
                         innerResponse = new PlainTextOutputSpeech();
                         string value = intentRequest.Intent.Slots["RouteName"].Value;
                         var location = await GetLatLonForUserLocation(input.Context.System, log);
-                        log.LogLine($"System {input.Context.System}");
                         var (lat, lon) = ((location.Item1.Length != 0) && (location.Item2.Length !=0)) ? location : ("47.611959", "-122.332893");
+                        log.LogLine("lat :" + lat);
+                        log.LogLine("lon: " + lon);
+                        
                         MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
                         var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(value, lat, lon);
-                        (innerResponse as PlainTextOutputSpeech).Text = GetRouteName($"input:{input.Context.System}, route:{value}, lat: {lat}, lon: {lon}");
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append($"The next {value} comes in ");
+                        foreach (var arrival in arrivalTimes)
+                        {
+                            sb.Append(arrival + " minutes,");
+                        }
+                        (innerResponse as PlainTextOutputSpeech).Text = sb.ToString();
+                        log.LogLine($"route:{value}, lat: {lat}, lon: {lon}");
                         break;
                     default:
                         log.LogLine($"Unknown intent: " + intentRequest.Intent.Name);
