@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EmeraldTransit_Seattle\EmeraldTransit_Seattle.csproj" />
-    <ProjectReference Include="..\ETransitLamdbda\ETransitLamdbda.csproj" />
   </ItemGroup>
 
 </Project>

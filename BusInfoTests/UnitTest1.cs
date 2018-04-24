@@ -75,7 +75,8 @@ namespace UnitTestProject
         public async Task TestGetArrivalsNull()
         {
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
-                                    await busInfo.GetArrivalTimesForRouteName(_busRoute, null, null, date));
+                                    await busInfo.GetArrivalTimesForRouteName(_busRoute, 
+                                    null, null, date));
         }
     }
 }

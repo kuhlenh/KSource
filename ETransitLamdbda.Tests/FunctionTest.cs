@@ -9,27 +9,8 @@ using EmeraldTransit_Seattle;
 using Alexa.NET.Request;
 using Alexa.NET.Response;
 using Alexa.NET.Request.Type;
-using ETransitLamdbda;
 using System.IO;
 using Newtonsoft.Json;
-
-namespace ETransitLamdbda.Tests
-{
-    public class FunctionTest
-    {
-        [Fact]
-        public void TestToUpperFunction()
-        {
-
-            // Invoke the lambda function and confirm the string was upper cased.
-            var function = new Function();
-            var context = new TestLambdaContext();
-            var upperCase = function.FunctionHandler("hello world", context);
-
-            Assert.Equal("HELLO WORLD", upperCase);
-        }
-    }
-}
 
 namespace EmeraldTransit_Seattle.Tests
 {
