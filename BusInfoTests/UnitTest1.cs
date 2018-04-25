@@ -38,28 +38,20 @@ namespace UnitTestProject
         }
 
         [TestMethod]
-        public async Task TestGetTimeZoneInfoAsync()
-        {
-            var actual = await busInfo.GetTimeZoneInfoAsync(conventionCenter.lat, conventionCenter.lon);
-
-            //await Assert.AreEqual(3, 3);
-        }
-
-        [TestMethod]
         public async Task TestGetArrivals()
         {
             var actual = await busInfo.GetArrivalTimesForRouteName(_busRoute, conventionCenter.lat, conventionCenter.lon, date);
-            var expected = new List<DateTime>();
-            expected.Add(DateTime.Parse("5/1/2017, 4:33:42 PM"));
-            expected.Add(DateTime.Parse("5/1/2017, 4:35:12 PM"));
-            expected.Add(DateTime.Parse("5/1/2017, 4:43:46 PM"));
+            //var expected = new List<DateTime>();
+            //expected.Add(DateTime.Parse("5/1/2017, 4:33:42 PM"));
+            //expected.Add(DateTime.Parse("5/1/2017, 4:35:12 PM"));
+            //expected.Add(DateTime.Parse("5/1/2017, 4:43:46 PM"));
 
             var expected2 = new List<double>(); // DateTime.Parse("5/1/2017, 4:30:00 PM");
             expected2.Add(3.7); //3min 42s
             expected2.Add(5.2); //5 min 12s
             expected2.Add(13.8); //13min 46s
 
-            Assert.AreEqual(3, actual.Count);
+            Assert.AreEqual(expected2.Count, actual.Count);
             CollectionAssert.AreEqual(expected2, actual);
         }
 

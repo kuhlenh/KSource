@@ -169,24 +169,6 @@ namespace BusInfo
             return timeUntil;
         }
 
-        public async Task<TimeZoneInfo> GetTimeZoneInfoAsync(string lat, string lon)
-        {
-            string json = await _timezoneConverter.GetTimeZoneJsonFromLatLonAsync(lat, lon);
-            string timeZoneId = JObject.Parse(json)["timeZoneId"].ToString();
-            try
-            {
-                string olsonTimeZone = _olsonWindowsTimes[timeZoneId];
-
-                TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(olsonTimeZone);
-                return timeZoneInfo;
-            }
-            catch (Exception e)
-            {
-                return TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
-                //throw e;
-            }
-        }
-
         public async Task<List<ArrivalsAndDeparture>> GetArrivalsAndDepartures(string stopId, string routeShortName)
         {
             string json = await _busLocator.GetJsonForArrivals(stopId);
