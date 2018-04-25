@@ -154,36 +154,18 @@ namespace BusInfo
             List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(stop.Id, route.ShortName);
 
             //new work
-            var utcnow = (Int32)(time.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            //var utcnow = (Int32)(time.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
             var universalTime = time.ToUniversalTime();
-            var ms = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime)));
+            var busTimes = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
 
             var timeUntil = new List<double>();
-            foreach(var m in ms)
+            foreach(var m in busTimes)
             {
                 var delta = m - universalTime;
-                var min = delta.TotalMinutes;
+                //demo had to add in the Round bc was off in decimals
+                var min = Math.Round(delta.TotalMinutes,1);
+                timeUntil.Add(min);
             }
-
-            //var ms2 = arrivalData.Select(a => Convert.ToDouble(a.PredictedArrivalTime) - utcnow).Take(3);
-            //var ms3 = ms.Select(a => (a - time).TotalMinutes).Take(3);
-
-            //foreach (var arrival in arrivalData)
-            //{
-            //    var predicted = Convert.ToDouble(arrival.PredictedArrivalTime);
-            //    double delta = predicted - utcnow;
-            //    var minutes = TimeSpan.FromMilliseconds(delta).TotalMinutes;
-            //    timeUntil.Add(minutes);
-            //}
-
-            //IEnumerable<DateTime> UtcData = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-            //.AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
-            // Convert from UTC to user's timezone
-            //TimeZoneInfo timeZoneInfo = await GetTimeZoneInfoAsync(lat, lon);
-            //IEnumerable<DateTime> UserTimeData = UtcData.Select(d => TimeZoneInfo.ConvertTimeFromUtc(d, timeZoneInfo));
-
-            //return UserTimeData.ToList();
-            //return UtcData.ToList();
             return timeUntil;
         }
 

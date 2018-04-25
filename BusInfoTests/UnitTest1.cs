@@ -60,7 +60,7 @@ namespace UnitTestProject
             expected2.Add(13.8); //13min 46s
 
             Assert.AreEqual(3, actual.Count);
-            CollectionAssert.AreEqual(expected, actual);
+            CollectionAssert.AreEqual(expected2, actual);
         }
 
         [TestMethod]
