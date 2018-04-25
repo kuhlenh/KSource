@@ -121,9 +121,10 @@ namespace EmeraldTransit_Seattle
                         break;
                 }
             }
-
+            var plainTextOutput = (innerResponse as PlainTextOutputSpeech);
+            plainTextOutput.Text = plainTextOutput.Text != "testing" ? plainTextOutput.Text : "No stops could be found within a mile of your location.";
             response.Response.OutputSpeech = innerResponse;
-            response.Version = "1.0";
+                response.Version = "1.0";
             return response;
         }
 
@@ -149,6 +150,9 @@ namespace EmeraldTransit_Seattle
             var responseGeocode = await client.GetAsync(uriGoogle);
             if (!responseGeocode.IsSuccessStatusCode)
             {
+                log.LogLine("Google Exception: " + responseGeocode.StatusCode);
+                log.LogLine("Google Exception: " + responseGeocode.ReasonPhrase);
+
                 throw new Exception("Google Geocode API failed.");
             }
             var json2 = await responseGeocode.Content.ReadAsStringAsync();
