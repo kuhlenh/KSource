@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BusInfoHelpers;
 
 namespace BusInfo
 {
@@ -147,24 +148,25 @@ namespace BusInfo
         // Returns a list of DateTimes for the timezone of the given lat/lon
         public async Task<List<double>> GetArrivalTimesForRouteName(string routeShortName, string lat, string lon, DateTime time)
         {
-            BusHelpers.ValidateLatLon(lat, lon);
+            // validate lat,lon inputs
+            GeocodeHelpers.ValidateLatLon(lat, lon);
 
             // find the route object for the given name and the closest stop for that route
             (Route route, Stop stop) = await GetRouteAndStopForLocation(routeShortName, lat, lon);
             List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(stop.Id, route.ShortName);
 
-            //new work
-            //var utcnow = (Int32)(time.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
             var universalTime = time.ToUniversalTime();
-            var busTimes = arrivalData.Select(a => new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(Convert.ToDouble(a.PredictedArrivalTime))).Take(3);
+
+            var busTimes = arrivalData.Select(a => BusHelpers.ConvertMillisecondsToUTC(a.PredictedArrivalTime)).Take(3);
 
             var timeUntil = new List<double>();
             foreach(var m in busTimes)
             {
                 var delta = m - universalTime;
                 //demo had to add in the Round bc was off in decimals
-                var min = Math.Round(delta.TotalMinutes,1);
-                timeUntil.Add(min);
+                //var min = Math.Round(delta.TotalMinutes,1);
+
+                timeUntil.Add(delta.TotalMinutes);
             }
             return timeUntil;
         }
@@ -229,10 +231,12 @@ namespace BusInfo
                 if (targetRoute != null)
                 {
                     Route route = targetRoute.ToObject<Route>();
-                    JEnumerable<JToken> stops = jobject["data"]["list"].Children();
+                    var stops = jobject["data"]["list"].Children().ToList();
                     List<Stop> stopsForRoute = new List<Stop>();
-                    foreach (JToken s in stops)
+                    // demo for to foreach
+                    for (var i = 0; i < stops.Count; i++)
                     {
+                        JToken s = stops[i];
                         JToken routeIds = s["routeIds"];
                         foreach (JToken rId in routeIds)
                         {

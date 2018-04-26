@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 
 namespace BusInfo
 {
-    public static class BusHelpers
+    public class GeocodeHelpers
     {
         // Checks if given latitude and longitude are valid entries
         public static void ValidateLatLon(string lat, string lon)
@@ -30,9 +29,6 @@ namespace BusInfo
                 throw new ArgumentException("You are missing latitude and longitude.");
             }
         }
-
-        // Removes the identifier from route name, e.g., ###E for Express routes
-        public static string CleanRouteName(string routeShortName) => Regex.Replace(routeShortName, "[^0-9]", "");
 
         // Uses distance formula to find distance between two points
         public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
