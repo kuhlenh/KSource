@@ -34,6 +34,7 @@ namespace BusInfo
         // demo Pythia?
         public static double CalculateDistance(string lat1, string lon1, double lat2, double lon2)
         {
+            //var distance = Math.Sqrt(Math.Pow(double.Parse()))
             return Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2)
                    + Math.Pow(double.Parse(lon1) - lon2, 2));
         }
