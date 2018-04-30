@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -213,7 +213,7 @@ namespace BusInfo
             //Stop minDistStop = routeAndStops.Item2.First();
             // demo pythia in claculate distance
             // demo linq query to foreach (want to step into method, so to set easier breakpoint convert to foreach)
-            var minDistance = routeAndStops.stops.Min(s => GeocodeHelpers.CalculateDistance(lat, lon, s.Lat, s.Lon));
+            //var minDistance = routeAndStops.stops.Min(s => GeocodeHelpers.CalculateDistance(lat, lon, s.Lat, s.Lon));
             var min = (from stop in routeAndStops.stops select GeocodeHelpers.CalculateDistance(lat, lon, stop.Lat, stop.Lon)).Min();
             Stop minDistStop = routeAndStops.stops.Where(x => GeocodeHelpers.CalculateDistance(lat, lon, x.Lat, x.Lon) == min).FirstOrDefault();
             return (routeAndStops.Item1, minDistStop);
@@ -239,10 +239,9 @@ namespace BusInfo
                     Route route = targetRoute.ToObject<Route>();
                     var stops = jobject["data"]["list"].Children().ToList();
                     List<Stop> stopsForRoute = new List<Stop>();
-                    // demo for to foreach
-                    for (var i = 0; i < stops.Count; i++)
+                    // demo foreach to for to get a counter
+                    foreach (JToken s in stops)
                     {
-                        JToken s = stops[i];
                         JToken routeIds = s["routeIds"];
                         foreach (JToken rId in routeIds)
                         {
@@ -259,3 +258,4 @@ namespace BusInfo
         }
     }
 }
+
