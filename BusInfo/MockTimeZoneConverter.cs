@@ -9,7 +9,8 @@ namespace BusInfo
 
         public Task<string> GetTimeZoneJsonFromLatLonAsync(string lat, string lon)
         {
-            var json = LoadJson(@"C:\Users\kaseyu\Source\Repos\FunctionApp1\UnitTestProject\Location.json");
+            var rootPath = MockBusLocator.GetTestProjectRootFolder();
+            var json = LoadJson(Path.Combine(rootPath, "Location.json"));
             return Task.FromResult(json);
         }
     }

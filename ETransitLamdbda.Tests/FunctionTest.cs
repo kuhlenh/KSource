@@ -21,9 +21,10 @@ namespace EmeraldTransit_Seattle.Tests
 
         private static string GetTestProjectRootFolder()
         {
-            const string ProjectName = "ETransitLamdbda.Tests";
             string rootPath;
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            Assembly asm = Assembly.GetExecutingAssembly();
+            string codeBase = asm.CodeBase;
+            string projectName = asm.GetName().Name;
             UriBuilder uri = new UriBuilder(codeBase);
             string path = Uri.UnescapeDataString(uri.Path);
             var dir = Path.GetDirectoryName(path);
@@ -31,11 +32,12 @@ namespace EmeraldTransit_Seattle.Tests
             //running in the context of LUT, and the path needs to be adjusted
             if (dir.Contains(".vs"))
             {
-                rootPath = $"{dir.Substring(0, dir.IndexOf("\\.vs\\") + 1)}{ProjectName}\\";
+                rootPath = $"{dir.Substring(0, dir.IndexOf("\\.vs\\") + 1)}{projectName}\\";
             }
             else
             {
-                rootPath = dir.Substring(0, dir.IndexOf("\\bin\\") + 1);
+                var projPath = dir.Substring(0, dir.IndexOf("\\bin\\") + 1);
+                rootPath = Path.Combine(projPath, @"..", projectName);
             }
 
             return rootPath;
