@@ -28,8 +28,9 @@ namespace BusInfo
                 rootPath = $"{dir.Substring(0, dir.IndexOf("\\.vs\\") + 1)}{projectName}\\";
             }
             else
-            {
-                rootPath = dir.Substring(0, dir.IndexOf("\\bin\\") + 1);
+            { 
+                var projPath = dir.Substring(0, dir.IndexOf("\\bin\\") + 1);
+                rootPath = Path.Combine(projPath, @"..", projectName);
             }
 
             return rootPath;
