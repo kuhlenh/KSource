@@ -11,6 +11,7 @@ using Alexa.NET.Response;
 using Alexa.NET.Request.Type;
 using System.IO;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace EmeraldTransit_Seattle.Tests
 {
@@ -18,9 +19,33 @@ namespace EmeraldTransit_Seattle.Tests
     {
         private static string LoadJson(string file) => File.ReadAllText(file);
 
+        private static string GetTestProjectRootFolder()
+        {
+            const string ProjectName = "ETransitLamdbda.Tests";
+            string rootPath;
+            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            string path = Uri.UnescapeDataString(uri.Path);
+            var dir = Path.GetDirectoryName(path);
+
+            //running in the context of LUT, and the path needs to be adjusted
+            if (dir.Contains(".vs"))
+            {
+                rootPath = $"{dir.Substring(0, dir.IndexOf("\\.vs\\") + 1)}{ProjectName}\\";
+            }
+            else
+            {
+                rootPath = dir.Substring(0, dir.IndexOf("\\bin\\") + 1);
+            }
+
+            return rootPath;
+        }
+
         public string GetSkillRequest()
         {
-            var json = LoadJson(@"C:\Users\kaseyu\Source\Repos\EmeraldTransit_Seattle\EmeraldTransit_Seattle\Request.json");
+            var rootPath = GetTestProjectRootFolder();
+            var jsonPath = Path.Combine(rootPath, @"..\EmeraldTransit_Seattle\Request.json");
+            var json = LoadJson(jsonPath);
             return json;
         }
 
