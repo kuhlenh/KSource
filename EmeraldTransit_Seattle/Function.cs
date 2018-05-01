@@ -134,6 +134,7 @@ namespace EmeraldTransit_Seattle
             var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(route, location.Item1, location.Item2, time);
             StringBuilder sb = new StringBuilder();
             sb.Append($"The next {route} comes in ");
+
             foreach (var arrival in arrivalTimes)
             {
                 sb.Append(arrival + " minutes,");
@@ -142,7 +143,22 @@ namespace EmeraldTransit_Seattle
             return sb.ToString();
         }
 
-        private async Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
+        
+    }
+
+    public class MockMapLocator : IMapLocator
+    {
+        public Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
+        {
+            return new Task<(string, string)>(()=>("47.611959", "-122.332893"));
+        }
+    }
+
+    public class MapLocator: IMapLocator
+    {
+        public HttpClient client { get; set; }
+
+        public async Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
         {
             client.DefaultRequestHeaders.Clear();
             var key = "AIzaSyAKLwQo-xS-a7HChxZDjBvxHxyo0vCj8RE";
@@ -166,6 +182,11 @@ namespace EmeraldTransit_Seattle
         }
     }
 
+    public interface IMapLocator
+    {
+        Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address);
+    } 
+
     class AlexaDeviceAddressClient
     {
         public string ApiEndpoint { get; set; }
@@ -187,8 +208,6 @@ namespace EmeraldTransit_Seattle
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConsentToken);
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            //var requestOptions = $"/v1/devices/{DeviceId}/settings/address/";
-            //var uri = new Uri($"{ApiEndpoint}{requestOptions}");
             var uri = $"https://api.amazonalexa.com/v1/devices/{DeviceId}/settings/address";
 
             logger.LogLine($"\n\nURI: {uri}");

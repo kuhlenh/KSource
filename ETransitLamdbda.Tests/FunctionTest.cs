@@ -50,7 +50,7 @@ namespace EmeraldTransit_Seattle.Tests
         }
 
         [Fact]
-        public void TestToUpperFunction2()
+        public void TestSkill1()
         {
             var json = GetSkillRequest();
             var request = JsonConvert.DeserializeObject<SkillRequest>(json);
@@ -58,7 +58,9 @@ namespace EmeraldTransit_Seattle.Tests
             // invoke function
             var function = new Function();
             var context = new TestLambdaContext();
-            var upperCase = function.FunctionHandler(request, context);
+            var response = function.FunctionHandler(request, context);
+
+            var text = response.Result.ToString();
 
             Assert.Equal("", "");
         }
