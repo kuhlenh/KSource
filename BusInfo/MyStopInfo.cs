@@ -166,8 +166,9 @@ namespace BusInfo
                 var delta = t - universalTime;
                 //demo had to add in the Round bc was off in decimals
                 //var min = Math.Round(delta.TotalMinutes,1);
-
+                //var min = Math.Round(delta.TotalMinutes);
                 timeUntil.Add(delta.TotalMinutes);
+                //timeUntil.Add(min);
             }
             return timeUntil;
         }

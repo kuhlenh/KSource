@@ -26,6 +26,16 @@ namespace EmeraldTransit_Seattle
     public class Function
     {
         HttpClient client = new HttpClient();
+        private IMapLocator _mapLocator;
+        private IAlexaDeviceAddressClient _deviceAddressClient;
+        private MyStopInfo _busInfo;
+
+        public Function(IMapLocator mapLocator, IAlexaDeviceAddressClient deviceAddressClient)
+        {
+            _mapLocator = mapLocator;
+            _deviceAddressClient = deviceAddressClient;
+        }
+
         //Func<T> GetResult<T>(T prototype) { return () => prototype; }
 
         /// <summary>
@@ -100,17 +110,27 @@ namespace EmeraldTransit_Seattle
                         var route = intentRequest.Intent.Slots["RouteName"].Value;
                         log.LogLine("\nTrying new version...");
                         // get the device's location to find the nearest bus stop
-                        var alexaDeviceAddressClient = new AlexaDeviceAddressClient(apiEndpoint, deviceId, consentToken);
-                        var address = await alexaDeviceAddressClient.GetFullAddressAsync(log);
+                        if (_deviceAddressClient is MockAlexaDeviceAddressClient)
+                        {
+                            _deviceAddressClient = new MockAlexaDeviceAddressClient(apiEndpoint, deviceId, consentToken);
+                            _busInfo = new MyStopInfo(new MockBusLocator(), new MockTimeZoneConverter());
+                        }
+                        else
+                        {
+                            _deviceAddressClient = new AlexaDeviceAddressClient(apiEndpoint, deviceId, consentToken);
+                            _busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
+                        }
+                        var address = await _deviceAddressClient.GetFullAddressAsync(log);
                         log.LogLine("==================================");
                         log.LogLine("\nAddress: " + address);
                         log.LogLine("==================================");
-
+                        
                         // call into the Google Maps api to get geocode location
-                        var location = await GoogleMapGeocodeLocation(log, address);
+                        var location = await _mapLocator.GoogleMapGeocodeLocation(log, address);
 
                         // call into the OBA api to get bus times
-                        var sb = await GetBusResponse(route, location, time);
+
+                        var sb = await GetBusResponse(route, location, time, _busInfo);
                         (innerResponse as PlainTextOutputSpeech).Text = sb;
                         log.LogLine("Final output == " + sb);
                         break;
@@ -128,9 +148,8 @@ namespace EmeraldTransit_Seattle
             return response;
         }
 
-        private static async Task<string> GetBusResponse(string route, (string, string) location, DateTime time)
+        private static async Task<string> GetBusResponse(string route, (string, string) location, DateTime time, MyStopInfo busInfo)
         {
-            MyStopInfo busInfo = new MyStopInfo(new BusLocator(), new TimeZoneConverter());
             var arrivalTimes = await busInfo.GetArrivalTimesForRouteName(route, location.Item1, location.Item2, time);
             StringBuilder sb = new StringBuilder();
             sb.Append($"The next {route} comes in ");
@@ -142,21 +161,24 @@ namespace EmeraldTransit_Seattle
 
             return sb.ToString();
         }
-
-        
     }
 
     public class MockMapLocator : IMapLocator
     {
         public Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
         {
-            return new Task<(string, string)>(()=>("47.611959", "-122.332893"));
+            return Task.FromResult(("47.611959", "-122.332893"));
         }
     }
 
     public class MapLocator: IMapLocator
     {
-        public HttpClient client { get; set; }
+        public MapLocator(HttpClient client)
+        {
+            this.client = client;
+        }
+
+        private HttpClient client;
 
         public async Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
         {
@@ -185,9 +207,43 @@ namespace EmeraldTransit_Seattle
     public interface IMapLocator
     {
         Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address);
-    } 
+    }
 
-    class AlexaDeviceAddressClient
+    public interface IAlexaDeviceAddressClient
+    {
+        string ApiEndpoint { get; set; }
+        string DeviceId { get; set; }
+        string ConsentToken { get; set; }
+        Task<string> GetFullAddressAsync(ILambdaLogger logger);
+    }
+
+    public class MockAlexaDeviceAddressClient : IAlexaDeviceAddressClient
+    {
+        public MockAlexaDeviceAddressClient()
+        {
+            ApiEndpoint = "";
+            DeviceId = "";
+            ConsentToken = "";
+        }
+
+        public MockAlexaDeviceAddressClient(string apiEndpoint, string deviceId, string consentToken)
+        {
+            ApiEndpoint = apiEndpoint;
+            DeviceId = deviceId;
+            ConsentToken = consentToken;
+        }
+
+        public string ApiEndpoint { get; set; }
+        public string DeviceId { get; set; }
+        public string ConsentToken { get; set; }
+
+        public Task<string> GetFullAddressAsync(ILambdaLogger logger)
+        {
+            return Task.FromResult("705 Pike St,Seattle,WA,98101");
+        }
+    }
+
+    class AlexaDeviceAddressClient : IAlexaDeviceAddressClient
     {
         public string ApiEndpoint { get; set; }
         public string DeviceId { get; set; }

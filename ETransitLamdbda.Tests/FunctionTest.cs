@@ -52,19 +52,22 @@ namespace EmeraldTransit_Seattle.Tests
         }
 
         [Fact]
-        public void TestSkill1()
+        public async Task TestSkill1()
         {
             var json = GetSkillRequest();
             var request = JsonConvert.DeserializeObject<SkillRequest>(json);
 
+            var mockMapLocator = new MockMapLocator();
+            var mockDeviceClient = new MockAlexaDeviceAddressClient();
             // invoke function
-            var function = new Function();
+            var function = new Function(mockMapLocator, mockDeviceClient);
             var context = new TestLambdaContext();
-            var response = function.FunctionHandler(request, context);
+            var response = await function.FunctionHandler(request, context);
 
-            var text = response.Result.ToString();
+            var speech = (PlainTextOutputSpeech)response.Response.OutputSpeech;
+            var textTrim = speech.Text.Substring(0, 37);
 
-            Assert.Equal("", "");
+            Assert.Equal("The next 545 comes in -515276 minutes", textTrim);
         }
     }
 

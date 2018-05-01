@@ -42,9 +42,9 @@ namespace UnitTestProject
         {
             var actual = await busInfo.GetArrivalTimesForRouteName(_busRoute, conventionCenter.lat, conventionCenter.lon, date);
             var expected2 = new List<double>();
-            expected2.Add(3.7); //3min 42s
-            expected2.Add(5.2); //5 min 12s
-            expected2.Add(13.8); //13min 46s
+            expected2.Add(4); //3min 42s
+            expected2.Add(5); //5 min 12s
+            expected2.Add(14); //13min 46s
 
             Assert.AreEqual(expected2.Count, actual.Count);
             CollectionAssert.AreEqual(expected2, actual);
