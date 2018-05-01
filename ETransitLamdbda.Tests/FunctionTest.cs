@@ -21,9 +21,10 @@ namespace EmeraldTransit_Seattle.Tests
 
         private static string GetTestProjectRootFolder()
         {
-            const string ProjectName = "ETransitLamdbda.Tests";
             string rootPath;
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            Assembly asm = Assembly.GetExecutingAssembly();
+            string codeBase = asm.CodeBase;
+            string ProjectName = asm.GetName().Name;
             UriBuilder uri = new UriBuilder(codeBase);
             string path = Uri.UnescapeDataString(uri.Path);
             var dir = Path.GetDirectoryName(path);
