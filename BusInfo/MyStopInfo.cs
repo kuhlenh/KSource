@@ -218,7 +218,6 @@ namespace BusInfo
             // demo pythia in claculate distance
             // demo linq query to foreach (want to step into method, so to set easier breakpoint convert to foreach)
             //var minDistance = routeAndStops.stops.Min(s => GeocodeHelpers.CalculateDistance(lat, lon, s.Lat, s.Lon));
-            var min = (from stop in routeAndStops.stops select GeocodeHelpers.CalculateDistance(lat, lon, stop.Lat, stop.Lon));
             //var min = (from stop in routeAndStops.stops select GeocodeHelpers.CalculateDistance(lat, lon, stop.Lat, stop.Lon)).Min();
             //Stop minDistStop = routeAndStops.stops.Where(x => GeocodeHelpers.CalculateDistance(lat, lon, x.Lat, x.Lon) == min).FirstOrDefault();
             return (routeAndStops.Item1, minDistStop);

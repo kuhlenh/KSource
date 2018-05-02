@@ -129,7 +129,6 @@ namespace EmeraldTransit_Seattle
                         var location = await _mapLocator.GoogleMapGeocodeLocation(log, address);
 
                         // call into the OBA api to get bus times
-
                         var sb = await GetBusResponse(route, location, time, _busInfo);
                         (innerResponse as PlainTextOutputSpeech).Text = sb;
                         log.LogLine("Final output == " + sb);

@@ -23,8 +23,6 @@ namespace UnitTestProject
             var actual = await busInfo.GetRouteAndStopForLocation(_busRoute, conventionCenter.lat, conventionCenter.lon);
             var expectedRoute = new Route("40", "", "Redmond Seattle", "40_100236", "Redmond - Seattle", "545",
                                           "", 3, "http://www.soundtransit.org/Schedules/ST-Express-Bus/545");
-            //var expectedStop = new Stop("700", "1_700", 47.610951, 0, -122.33725, "4th Ave & Pike St",
-            //new List<string>(), "UNKNOWN", new Direction("NW"));
 
             var expectedStop = new Stop("1050", "1_1050", 47.613937, 0, -122.33416, "Olive Way & 8th Ave", new List<string>(), "UNKNOWN", new Direction("NE"));
 
