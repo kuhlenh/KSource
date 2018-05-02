@@ -211,12 +211,14 @@ namespace BusInfo
                 throw new ArgumentException("No stops were found within a mile of your location for your bus route.");
             }
 
-            //Stop minDistStop = routeAndStops.Item2.First();
+            Stop minDistStop = routeAndStops.Item2.First();
+            
             // demo pythia in claculate distance
             // demo linq query to foreach (want to step into method, so to set easier breakpoint convert to foreach)
             //var minDistance = routeAndStops.stops.Min(s => GeocodeHelpers.CalculateDistance(lat, lon, s.Lat, s.Lon));
-            var min = (from stop in routeAndStops.stops select GeocodeHelpers.CalculateDistance(lat, lon, stop.Lat, stop.Lon)).Min();
-            Stop minDistStop = routeAndStops.stops.Where(x => GeocodeHelpers.CalculateDistance(lat, lon, x.Lat, x.Lon) == min).FirstOrDefault();
+            var min = (from stop in routeAndStops.stops select GeocodeHelpers.CalculateDistance(lat, lon, stop.Lat, stop.Lon));
+            //var min = (from stop in routeAndStops.stops select GeocodeHelpers.CalculateDistance(lat, lon, stop.Lat, stop.Lon)).Min();
+            //Stop minDistStop = routeAndStops.stops.Where(x => GeocodeHelpers.CalculateDistance(lat, lon, x.Lat, x.Lon) == min).FirstOrDefault();
             return (routeAndStops.Item1, minDistStop);
         }
 
