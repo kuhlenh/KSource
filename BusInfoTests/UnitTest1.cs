@@ -15,7 +15,7 @@ namespace UnitTestProject
         (string lat, string lon) conventionCenter = ("47.611959", "-122.332893");
         (string lat, string lon) microsoftCampus = ("47.639905", "-122.125485");
         string _busRoute = "545";
-        DateTime date = DateTime.Parse("5/1/2017, 4:30:00 PM");
+        DateTime date = DateTime.Parse("5/01/2018, 2:50:00 PM");
 
         [TestMethod]
         public async Task TestGetRouteAndStopForLocation()
@@ -44,13 +44,13 @@ namespace UnitTestProject
         {
             var actual = await busInfo.GetArrivalTimesForRouteName(_busRoute, conventionCenter.lat, conventionCenter.lon, date);
             var expected = new List<double>();
-            expected.Add(4); //3min 42s
-            expected.Add(5); //5 min 12s
-            expected.Add(14); //13min 46s
+            expected.Add(9);
+            expected.Add(12);
+            expected.Add(36);
 
-            Assert.AreEqual(0, 0);
-            //Assert.AreEqual(expected2.Count, actual.Count);
-            //CollectionAssert.AreEqual(expected2, actual);
+            //Assert.AreEqual(0, 0);
+            Assert.AreEqual(expected.Count, actual.Count);
+            CollectionAssert.AreEqual(expected, actual);
         }
 
         [TestMethod]

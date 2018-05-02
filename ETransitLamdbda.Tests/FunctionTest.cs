@@ -65,9 +65,9 @@ namespace EmeraldTransit_Seattle.Tests
             var response = await function.FunctionHandler(request, context);
 
             var speech = (PlainTextOutputSpeech)response.Response.OutputSpeech;
-            var textTrim = speech.Text.Substring(0, 37);
+            var textTrim = speech.Text.Substring(0, 35);
 
-            Assert.Equal("The next 545 comes in 515276 minutes", textTrim);
+            Assert.Equal("The next 545 comes in 10229 minutes", textTrim);
         }
     }
 

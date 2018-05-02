@@ -158,7 +158,9 @@ namespace BusInfo
 
             var universalTime = time.ToUniversalTime();
             //demo sourcelink
-            var busTimes = arrivalData.Select(a => BusHelpers.ConvertMillisecondsToUTC(a.PredictedArrivalTime)).Take(3);
+            var busTimes = arrivalData
+                            .Where(a=> a.PredictedArrivalTime != null && (Int64)a.PredictedArrivalTime > 0)
+                            .Select(a => BusHelpers.ConvertMillisecondsToUTC(a.PredictedArrivalTime));
 
             var timeUntil = new List<double>();
             foreach(var t in busTimes)
