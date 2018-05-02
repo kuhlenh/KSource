@@ -46,7 +46,6 @@ namespace UnitTestProject
             expected.Add(12);
             expected.Add(36);
 
-            //Assert.AreEqual(0, 0);
             Assert.AreEqual(expected.Count, actual.Count);
             CollectionAssert.AreEqual(expected, actual);
         }
