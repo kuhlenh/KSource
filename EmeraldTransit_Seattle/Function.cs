@@ -17,9 +17,10 @@ using Newtonsoft.Json.Linq;
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
-namespace EmeraldTransit_Seattle {
+namespace EmeraldTransit_Seattle
+{
 
-	public class Function
+    public class Function
     {
         HttpClient client = new HttpClient();
         private IMapLocator _mapLocator;
@@ -47,7 +48,7 @@ namespace EmeraldTransit_Seattle {
             response.Response = new ResponseBody();
             response.Response.ShouldEndSession = false;
             IOutputSpeech innerResponse = new PlainTextOutputSpeech() { Text = "testing" };
-            var log = context.Logger;
+            var log = (ILogger)context.Logger;
 
             log.LogLine("\nStarting function handler...");
 
@@ -163,7 +164,7 @@ namespace EmeraldTransit_Seattle {
         string ApiEndpoint { get; set; }
         string DeviceId { get; set; }
         string ConsentToken { get; set; }
-        Task<string> GetFullAddressAsync(ILambdaLogger logger);
+        Task<string> GetFullAddressAsync(ILogger logger);
     }
 
     public class MockAlexaDeviceAddressClient : IAlexaDeviceAddressClient
@@ -186,7 +187,7 @@ namespace EmeraldTransit_Seattle {
         public string DeviceId { get; set; }
         public string ConsentToken { get; set; }
 
-        public Task<string> GetFullAddressAsync(ILambdaLogger logger)
+        public Task<string> GetFullAddressAsync(ILogger logger)
         {
             return Task.FromResult("705 Pike St,Seattle,WA,98101");
         }
@@ -207,7 +208,7 @@ namespace EmeraldTransit_Seattle {
             ConsentToken = consentToken;
         }
 
-        public async Task<string> GetFullAddressAsync(ILambdaLogger logger)
+        public async Task<string> GetFullAddressAsync(ILogger logger)
         {
             logger.LogLine("Starting GetFullAddress...");
             client.DefaultRequestHeaders.Accept.Clear();
