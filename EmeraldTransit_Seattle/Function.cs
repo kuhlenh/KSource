@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,17 +11,15 @@ using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using Amazon.Lambda.Core;
 using BusInfo;
-//using BusInfo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
 
-namespace EmeraldTransit_Seattle
-{
+namespace EmeraldTransit_Seattle {
 
-    public class Function
+	public class Function
     {
         HttpClient client = new HttpClient();
         private IMapLocator _mapLocator;
@@ -162,52 +158,6 @@ namespace EmeraldTransit_Seattle
         }
     }
 
-    public class MockMapLocator : IMapLocator
-    {
-        public Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
-        {
-            return Task.FromResult(("47.611959", "-122.332893"));
-        }
-    }
-
-    public class MapLocator: IMapLocator
-    {
-        public MapLocator(HttpClient client)
-        {
-            this.client = client;
-        }
-
-        private HttpClient client;
-
-        public async Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address)
-        {
-            client.DefaultRequestHeaders.Clear();
-            var key = "AIzaSyAKLwQo-xS-a7HChxZDjBvxHxyo0vCj8RE";
-            var uriGoogle = new Uri($"https://maps.google.com/maps/api/geocode/json?key={key}&address={address}&sensor=false");
-            var responseGeocode = await client.GetAsync(uriGoogle);
-            if (!responseGeocode.IsSuccessStatusCode)
-            {
-                log.LogLine("Google Exception: " + responseGeocode.StatusCode);
-                log.LogLine("Google Exception: " + responseGeocode.ReasonPhrase);
-
-                throw new Exception("Google Geocode API failed.");
-            }
-            var json2 = await responseGeocode.Content.ReadAsStringAsync();
-            var geocode = JsonConvert.DeserializeObject<Geocode>(json2);
-            log.LogLine("\ngoogle: " + json2);
-            var lat = geocode.results.FirstOrDefault().geometry.location.lat.ToString();
-            log.LogLine("lat " + lat);
-            var lng = geocode.results.FirstOrDefault().geometry.location.lng.ToString();
-            log.LogLine("lng" + lng);
-            return (lat, lng);
-        }
-    }
-
-    public interface IMapLocator
-    {
-        Task<(string, string)> GoogleMapGeocodeLocation(ILambdaLogger log, string address);
-    }
-
     public interface IAlexaDeviceAddressClient
     {
         string ApiEndpoint { get; set; }
@@ -301,72 +251,6 @@ namespace EmeraldTransit_Seattle
         }
 
 
-    }
-
-    public class AddressComponent
-    {
-        public string long_name { get; set; }
-        public string short_name { get; set; }
-        public List<string> types { get; set; }
-    }
-
-    public class Location
-    {
-        public double lat { get; set; }
-        public double lng { get; set; }
-    }
-
-    public class Northeast
-    {
-        public double lat { get; set; }
-        public double lng { get; set; }
-    }
-
-    public class Southwest
-    {
-        public double lat { get; set; }
-        public double lng { get; set; }
-    }
-
-    public class Viewport
-    {
-        public Northeast northeast { get; set; }
-        public Southwest southwest { get; set; }
-    }
-
-    public class Geometry
-    {
-        public Location location { get; set; }
-        public string location_type { get; set; }
-        public Viewport viewport { get; set; }
-    }
-
-    public class Result
-    {
-        public List<AddressComponent> address_components { get; set; }
-        public string formatted_address { get; set; }
-        public Geometry geometry { get; set; }
-        public string place_id { get; set; }
-        public List<string> types { get; set; }
-    }
-
-    public class Geocode
-    {
-        public List<Result> results { get; set; }
-        public string status { get; set; }
-    }
-    public class BusInfoResource
-    {
-        public string Language { get; set; }
-        public string SkillName { get; set; }
-        public string HelpMessage { get; set; }
-        public string HelpReprompt { get; set; }
-        public string StopMessage { get; set; }
-
-        public BusInfoResource(string language)
-        {
-            Language = language ?? throw new ArgumentNullException(nameof(language));
-        }
     }
     public class Address
     {

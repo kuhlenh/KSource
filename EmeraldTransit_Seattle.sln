@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusInfo", "BusInfo\BusInfo.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusInfoTests", "BusInfoTests\BusInfoTests.csproj", "{FDDE5CB5-DDEF-4CC5-88DB-D62A88952A8D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ETransitLamdbda.Tests", "ETransitLamdbda.Tests\ETransitLamdbda.Tests.csproj", "{8A48D3A3-6E07-4066-877D-8656FA875F7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmeraldTransit_Seattle.Tests", "ETransitLamdbda.Tests\EmeraldTransit_Seattle.Tests.csproj", "{8A48D3A3-6E07-4066-877D-8656FA875F7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
