@@ -57,13 +57,5 @@ namespace UnitTestProject
                                     await _busInfo.GetArrivalTimesForRouteName(_busRoute, "-100.0000", "200.0000", _date),
                                     "Not a valid latitude or longitude.");
         }
-
-        [TestMethod]
-        public async Task TestGetArrivalsNull()
-        {
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
-                                    await _busInfo.GetArrivalTimesForRouteName(_busRoute, 
-                                    null, null, _date));
-        }
     }
 }
