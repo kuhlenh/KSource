@@ -215,12 +215,12 @@ namespace EmeraldTransit_Seattle {
             client.DefaultRequestHeaders.Add("Accept", "application/json");
             var uri = $"https://api.amazonalexa.com/v1/devices/{DeviceId}/settings/address";
 
-            logger.LogLine($"\n\nURI: {uri}");
+            logger.LogLine(String.Format("\n\nURI: {0}", uri));
 
             var response = await client.GetAsync(uri);
 
             var code = response.StatusCode;
-            logger.LogLine($"\nHttpCode for AlexaDeviceAddressClient: {code}");
+            logger.LogLine(String.Format("\nHttpCode for AlexaDeviceAddressClient: {0}", code));
 
             //DEMO: convert if to switch
             if (code == HttpStatusCode.OK)
