@@ -153,10 +153,11 @@ namespace BusInfo
 
             // find the route object for the given name and the closest stop for that route
             (Route, Stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
-            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(info.Item2.Id, info.Item1.ShortName);
+            List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(
+                                                            info.Item2.Id, 
+                                                            info.Item1.ShortName);
 
             var universalTime = time.ToUniversalTime();
-
             var busTimes = arrivalData
                             .Where(a=> a.PredictedArrivalTime != null && (Int64)a.PredictedArrivalTime > 0)
                             .Select(a => BusHelpers.ConvertMillisecondsToUTC(a.PredictedArrivalTime));
@@ -202,15 +203,15 @@ namespace BusInfo
         // Returns a tuple of the user's Route and the nearest Stop in a 1800-meter radius
         public async Task<(Route route, Stop stop)> GetRouteAndStopForLocation(string routeShortName, string lat, string lon)
         {
-            (Route, List<Stop> stops) routeAndStops = await GetStopsForRoute(routeShortName, lat, lon);
-            if (routeAndStops.Item1 == null || routeAndStops.Item2 == null)
+            (Route route, List<Stop> stops) = await GetStopsForRoute(routeShortName, lat, lon);
+            if (route == null || stops == null)
             {
                 throw new ArgumentException("No stops were found within a mile of your location for your bus route.");
             }
 
-            Stop minDistStop = routeAndStops.Item2.First();
+            Stop minDistStop = stops.First();
             
-            return (routeAndStops.Item1, minDistStop);
+            return (route, minDistStop);
         }
 
         private async Task<(Route, List<Stop>)> GetStopsForRoute(string routeShortName, string lat, string lon)

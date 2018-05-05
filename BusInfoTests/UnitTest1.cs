@@ -13,7 +13,6 @@ namespace UnitTestProject
     
         MyStopInfo _busInfo = new MyStopInfo(new MockBusLocator(), new MockTimeZoneConverter());
         (string lat, string lon) _conventionCenter = ("47.611959", "-122.332893");
-        (string lat, string lon) _microsoftCampus = ("47.639905", "-122.125485");
         private readonly static string _busRoute = "545";
         DateTime _date = DateTime.Parse("5/01/2018, 2:50:00 PM");
 
@@ -64,6 +63,15 @@ namespace UnitTestProject
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () =>
                                     await _busInfo.GetArrivalTimesForRouteName(_busRoute,
                                     null, null, _date));
+        }
+
+        [TestMethod]
+        public void TestPrettyPrint()
+        {
+            var defaultLoc = GeocodeHelpers.GetDefaultLocation();
+            var actual = GeocodeHelpers.PrettyPrintGeocode(defaultLoc.lat, defaultLoc.lon);
+            var expected = "\nCurrent location: (47.64,-122.125)\n";
+            Assert.AreEqual(expected, actual);
         }
     }
 }
