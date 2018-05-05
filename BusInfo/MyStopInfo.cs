@@ -152,12 +152,11 @@ namespace BusInfo
             GeocodeHelpers.ValidateLatLon(lat, lon);
 
             // find the route object for the given name and the closest stop for that route
-            // demo tuples
             (Route, Stop) info = await GetRouteAndStopForLocation(routeShortName, lat, lon);
             List<ArrivalsAndDeparture> arrivalData = await GetArrivalsAndDepartures(info.Item2.Id, info.Item1.ShortName);
 
             var universalTime = time.ToUniversalTime();
-            //demo sourcelink
+
             var busTimes = arrivalData
                             .Where(a=> a.PredictedArrivalTime != null && (Int64)a.PredictedArrivalTime > 0)
                             .Select(a => BusHelpers.ConvertMillisecondsToUTC(a.PredictedArrivalTime));
@@ -166,11 +165,7 @@ namespace BusInfo
             foreach(var t in busTimes)
             {
                 var delta = t - universalTime;
-                //demo had to add in the Round bc was off in decimals
-                //var min = Math.Round(delta.TotalMinutes,1);
-                //var min = Math.Round(delta.TotalMinutes);
                 timeUntil.Add(delta.TotalMinutes);
-                //timeUntil.Add(min);
             }
             return timeUntil;
         }
@@ -215,11 +210,6 @@ namespace BusInfo
 
             Stop minDistStop = routeAndStops.Item2.First();
             
-            // demo pythia in claculate distance
-            // demo linq query to foreach (want to step into method, so to set easier breakpoint convert to foreach)
-            //var minDistance = routeAndStops.stops.Min(s => GeocodeHelpers.CalculateDistance(lat, lon, s.Lat, s.Lon));
-            //var min = (from stop in routeAndStops.stops select GeocodeHelpers.CalculateDistance(lat, lon, stop.Lat, stop.Lon)).Min();
-            //Stop minDistStop = routeAndStops.stops.Where(x => GeocodeHelpers.CalculateDistance(lat, lon, x.Lat, x.Lon) == min).FirstOrDefault();
             return (routeAndStops.Item1, minDistStop);
         }
 
@@ -243,7 +233,7 @@ namespace BusInfo
                     Route route = targetRoute.ToObject<Route>();
                     var stops = jobject["data"]["list"].Children().ToList();
                     List<Stop> stopsForRoute = new List<Stop>();
-                    // demo foreach to for to get a counter
+
                     foreach (JToken s in stops)
                     {
                         JToken routeIds = s["routeIds"];

@@ -223,7 +223,6 @@ namespace EmeraldTransit_Seattle
             var code = response.StatusCode;
             logger.LogLine(String.Format("\nHttpCode for AlexaDeviceAddressClient: {0}", code));
 
-            //DEMO: convert if to switch
             if (code == HttpStatusCode.OK)
             {
                 logger.LogLine("\nAddress successfully retrieved, now responding to user.");
@@ -247,7 +246,7 @@ namespace EmeraldTransit_Seattle
                 logger.LogLine("\nUnknown location failure.");
                 return "";
             }
-            // DEMO remove unreachable code
+
             logger.LogLine("Ending GetFullAddress...");
         }
 
