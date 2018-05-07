@@ -21,27 +21,28 @@ namespace EmeraldTransit_Seattle
         public string ApiEndpoint { get; set; }
         public string DeviceId { get; set; }
         public string ConsentToken { get; set; }
-        HttpClient client = new HttpClient();
+        private readonly static (string,string) _defaultLocation = BusInfo.GeocodeHelpers.GetDefaultLocation();
+        HttpClient _client;
 
         public AlexaDeviceAddressClient(string apiEndpoint, string deviceId, string consentToken)
         {
-
             ApiEndpoint = Regex.Replace(apiEndpoint, @"/^https?:\/\//i", "");
             DeviceId = deviceId;
             ConsentToken = consentToken;
+            _client =  new HttpClient();
         }
 
         public async Task<string> GetFullAddressAsync(ILogger logger)
         {
             logger.LogLine("Starting GetFullAddress...");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConsentToken);
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            _client.DefaultRequestHeaders.Accept.Clear();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConsentToken);
+            _client.DefaultRequestHeaders.Add("Accept", "application/json");
             var uri = $"https://api.amazonalexa.com/v1/devices/{DeviceId}/settings/address";
 
             logger.LogLine(String.Format("\n\nURI: {0}", uri));
 
-            var response = await client.GetAsync(uri);
+            var response = await _client.GetAsync(uri);
 
             var code = response.StatusCode;
             logger.LogLine(String.Format("\nHttpCode for AlexaDeviceAddressClient: {0}", code));

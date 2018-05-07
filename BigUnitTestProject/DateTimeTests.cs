@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using DoWork;
 
 namespace LargeTestProject
 {
@@ -1009,14 +1008,30 @@ namespace LargeTestProject
         [TestMethod] public void Test_994() { var dw = new Work(); Assert.IsInstanceOfType(dw.GetDateTime(), typeof(DateTime)); }
     }
 
-    internal class Work
+    public class Work
     {
         public Work()
         {
         }
 
+        internal object Format_1_Parameter(int i) {
+            throw new NotImplementedException();
+        }
+
+        internal object Format_2_Parameter(int i, int j) {
+            throw new NotImplementedException();
+        }
+
         internal object GetDateTime()
         {
+            throw new NotImplementedException();
+        }
+
+        internal object GetDouble() {
+            throw new NotImplementedException();
+        }
+
+        internal object GetInteger() {
             throw new NotImplementedException();
         }
     }
