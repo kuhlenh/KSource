@@ -18,11 +18,12 @@ namespace EmeraldTransit_Seattle
 
     class AlexaDeviceAddressClient : IAlexaDeviceAddressClient
     {
+        private readonly static (string,string) _defaultLocation = BusInfo.GeocodeHelpers.GetDefaultLocation();
+        private string _scheme = "Bearer";
+        HttpClient _client;
         public string ApiEndpoint { get; set; }
         public string DeviceId { get; set; }
         public string ConsentToken { get; set; }
-        private readonly static (string,string) _defaultLocation = BusInfo.GeocodeHelpers.GetDefaultLocation();
-        HttpClient _client;
 
         public AlexaDeviceAddressClient(string apiEndpoint, string deviceId, string consentToken)
         {
@@ -36,7 +37,7 @@ namespace EmeraldTransit_Seattle
         {
             logger.LogLine("Starting GetFullAddress...");
             _client.DefaultRequestHeaders.Accept.Clear();
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConsentToken);
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_scheme, ConsentToken);
             _client.DefaultRequestHeaders.Add("Accept", "application/json");
             var uri = $"https://api.amazonalexa.com/v1/devices/{DeviceId}/settings/address";
 

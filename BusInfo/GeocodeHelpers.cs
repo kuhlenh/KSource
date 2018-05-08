@@ -4,6 +4,18 @@ namespace BusInfo
 {
     public class GeocodeHelpers
     {
+        public static (string lat, string lon) GetDefaultLocation() 
+        {
+            return ("47.639905", "-122.125485");
+        }
+
+        public static string PrettyPrintGeocode(string lat, string lon)
+        {
+            double latitude = Double.Parse(lat);
+            var longitude = Double.Parse(lon);
+            return $"\nCurrent location: ({latitude},{longitude})\n";
+        }
+
         // Checks if given latitude and longitude are valid entries
         public static void ValidateLatLon(string lat, string lon)
         {
@@ -18,18 +30,6 @@ namespace BusInfo
             {
                 throw new ArgumentException("You are missing latitude and longitude.");
             }
-        }
-
-        public static string PrettyPrintGeocode(string lat, string lon)
-        {
-            double latitude = Math.Round(Double.Parse(lat), 3);
-            var longitude = Math.Round(Double.Parse(lon), 3);
-            return $"\nCurrent location: ({latitude},{longitude})\n";
-        }
-
-        public static (string lat, string lon) GetDefaultLocation()
-        {
-            return ("47.639905", "-122.125485");
         }
     }
 }
