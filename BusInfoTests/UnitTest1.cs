@@ -70,7 +70,7 @@ namespace UnitTestProject
         {
             var defaultLoc = GeocodeHelpers.GetDefaultLocation();
             var actual = GeocodeHelpers.PrettyPrintGeocode(defaultLoc.lat, defaultLoc.lon);
-            var expected = "\nCurrent location: (47.64,-122.125)\n";
+            var expected = "\nCurrent location: (47.639905,-122.125485)\n";
             Assert.AreEqual(expected, actual);
         }
     }
