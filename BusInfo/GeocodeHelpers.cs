@@ -11,8 +11,7 @@ namespace BusInfo
         private static string latitude = "47.639905";
         private static string longitude = "-122.125485";
 
-        public static (string lat, string lon) GetDefaultLocation()
-        {
+        public static (string lat, string lon) GetDefaultLocation() {
             return (latitude, longitude);
         }
         public static string PrettyPrintGeocode(string lat, string lon)
