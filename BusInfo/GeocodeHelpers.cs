@@ -6,7 +6,7 @@ using System;
 
 namespace BusInfo
 {
-    public class GeocodeHelpers
+    class GeocodeHelpers
     {
         private static string s_latitude = "47.639905";
         private static string s_longitude = "-122.125485";
@@ -28,9 +28,7 @@ namespace BusInfo
                 double latDouble = double.Parse(lat);
                 var lonDouble = double.Parse(lon);
                 if (!(latDouble >= -90) || !(latDouble <= 90) || !(lonDouble >= -180) || !(lonDouble <= 180))
-                {
                     throw new ArgumentException("Exceeds boundaries. Not a valid latitude or longitude.");
-                }
             } else {
                 throw new ArgumentException("You are missing latitude and longitude.");
             }
