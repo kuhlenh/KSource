@@ -6,7 +6,7 @@ using System;
 
 namespace BusInfo
 {
-    class GeocodeHelpers
+    public class GeocodeHelpers
     {
         private static string latitude = "47.639905";
         private static string longitude = "-122.125485";
