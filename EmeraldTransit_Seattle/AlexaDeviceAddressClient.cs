@@ -71,8 +71,6 @@ namespace EmeraldTransit_Seattle
                 logger.LogLine("\nUnknown location failure.");
                 return "";
             }
-
-            logger.LogLine("Ending GetFullAddress...");
         }
     }
 
