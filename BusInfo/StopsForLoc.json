@@ -5,15 +5,15 @@
     "limitExceeded": true,
     "list": [
       {
-        "code": "\"700\"",
-        "direction": "\"NW\"",
-        "id": "\"Testing-1-2-3\"",
+        "code": "700",
+        "direction": "NW",
+        "id": "Testing-1-2-3",
         "lat": 47.611960,
         "locationType": 0,
         "lon": -122.332893,
-        "name": "\"NewStop\"",
+        "name": "NewStop",
         "routeIds": [ "1_100264", "40_100236" ],
-        "wheelchairBoarding": "\"UNKNOWN\""
+        "wheelchairBoarding": "UNKNOWN"
       },
       {
         "code": "1040",
