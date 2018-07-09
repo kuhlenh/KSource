@@ -48,28 +48,26 @@ namespace EmeraldTransit_Seattle
             var code = response.StatusCode;
             logger.LogLine(String.Format("\nHttpCode for AlexaDeviceAddressClient: {0}", code));
 
-            if (code == HttpStatusCode.OK)
+            switch (code)
             {
-                logger.LogLine("\nAddress successfully retrieved, now responding to user.");
-                var content = await response.Content.ReadAsStringAsync();
-                var json = JsonConvert.DeserializeObject<Address>(content);
-                logger.LogLine("\nAddress is: " + json.ToString());
-                return json.ToString();
-            }
-            else if (code == HttpStatusCode.NoContent)
-            {
-                logger.LogLine("\nSuccessfully requested from the device address API, but no address was returned");
-                return "";
-            }
-            else if (code == HttpStatusCode.Forbidden)
-            {
-                logger.LogLine("\nThe consent token we had wasn't authorized to access the user's address. ");
-                return "";
-            }
-            else
-            {
-                logger.LogLine("\nUnknown location failure.");
-                return "";
+                case HttpStatusCode.OK:
+                    {
+                        logger.LogLine("\nAddress successfully retrieved, now responding to user.");
+                        var content = await response.Content.ReadAsStringAsync();
+                        var json = JsonConvert.DeserializeObject<Address>(content);
+                        logger.LogLine("\nAddress is: " + json.ToString());
+                        return json.ToString();
+                    }
+
+                case HttpStatusCode.NoContent:
+                    logger.LogLine("\nSuccessfully requested from the device address API, but no address was returned");
+                    return "";
+                case HttpStatusCode.Forbidden:
+                    logger.LogLine("\nThe consent token we had wasn't authorized to access the user's address. ");
+                    return "";
+                default:
+                    logger.LogLine("\nUnknown location failure.");
+                    return "";
             }
         }
     }
