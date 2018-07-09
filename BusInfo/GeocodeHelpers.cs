@@ -43,6 +43,6 @@ namespace BusInfo
             }
         }
 
-        internal static double CalculateDistanceFormula(string lat1, double lat2, string lon1, double lon2) => throw new NotImplementedException();
+        internal static double CalculateDistanceFormula(string lat1, string lon1, double lat2, double lon2) => throw new NotImplementedException();
     }
 }
