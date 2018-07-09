@@ -45,7 +45,8 @@ namespace BusInfo
 
         internal static double CalculateDistanceFormula(string lat1, string lon1, double lat2, double lon2)
         {
-            throw new NotImplementedException();
+            var distance = Math.Sqrt(Math.Pow(double.Parse(lat1) - lat2, 2) + Math.Pow(double.Parse(lon1) - lon2, 2));
+            return distance;
         }
     }
 }
