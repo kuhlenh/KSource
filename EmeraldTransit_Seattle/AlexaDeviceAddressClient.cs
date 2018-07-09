@@ -20,7 +20,7 @@ namespace EmeraldTransit_Seattle
     {
         private readonly static (string,string) _defaultLocation = BusInfo.GeocodeHelpers.GetDefaultLocation();
         private string _scheme = "Bearer";
-        HttpClient _client;
+        private HttpClient _client;
         public string ApiEndpoint { get; set; }
         public string DeviceId { get; set; }
         public string ConsentToken { get; set; }
