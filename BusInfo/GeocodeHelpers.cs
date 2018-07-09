@@ -35,7 +35,7 @@ namespace BusInfo
 
             if (lat.Length > 0 && lon.Length > 0) {
                 double latDouble = Double.Parse(lat);
-                var lonDouble = Double.Parse(lon);
+                double lonDouble = Double.Parse(lon);
                 if (!(latDouble >= -90) || !(latDouble <= 90) || !(lonDouble >= -180) || !(lonDouble <= 180))
                     throw new ArgumentException("Exceeds boundaries. Not a valid latitude or longitude.");
             } else {
