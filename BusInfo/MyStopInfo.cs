@@ -166,7 +166,7 @@ namespace BusInfo
             foreach(var t in busTimes)
             {
                 var delta = t - universalTime;
-                var totalMinutes = delta.TotalMinutes;
+                var totalMinutes = Math.Round(delta.TotalMinutes,0);
                 timeUntil.Add(totalMinutes);
             }
             return timeUntil;
