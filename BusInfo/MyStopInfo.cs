@@ -210,12 +210,12 @@ namespace BusInfo
                 throw new ArgumentException("No stops were found within a mile of your location for your bus route.");
             }
 
-            IEnumerable<double> enumerable()
+            IEnumerable<(int index, double distance)> enumerable()
             {
                 for (var i = 0; i < stops.Count; i++)
                 {
                     Stop stop = stops[i];
-                    yield return GeocodeHelpers.CalculateDistanceFormula(lat, lon, stop.Lat, stop.Lon);
+                    yield return (i, GeocodeHelpers.CalculateDistanceFormula(lat, lon, stop.Lat, stop.Lon));
                 }
             }
 
