@@ -19,7 +19,7 @@ namespace EmeraldTransit_Seattle
     class AlexaDeviceAddressClient : IAlexaDeviceAddressClient
     {
         private readonly static (string,string) _defaultLocation = BusInfo.GeocodeHelpers.GetDefaultLocation();
-        private string _scheme = "Bearer";
+        private readonly string _scheme = "Bearer";
         private HttpClient _client;
         public string ApiEndpoint { get; set; }
         public string DeviceId { get; set; }
