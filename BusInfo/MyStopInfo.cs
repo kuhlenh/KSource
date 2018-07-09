@@ -210,7 +210,7 @@ namespace BusInfo
                 throw new ArgumentException("No stops were found within a mile of your location for your bus route.");
             }
 
-            Stop minDistStop = stops.First();
+            //Stop minDistStop = stops.First();
             
             return (route, minDistStop);
         }
