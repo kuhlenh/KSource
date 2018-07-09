@@ -26,6 +26,13 @@ namespace EmeraldTransit_Seattle
             _client =  new HttpClient();
         }
 
+        public AlexaDeviceAddressClient(HttpClient client, string apiEndpoint, string deviceId)
+        {
+            _client = client;
+            ApiEndpoint = apiEndpoint;
+            DeviceId = deviceId;
+        }
+
         public async Task<string> GetFullAddressAsync(ILogger logger)
         {
             logger.LogLine("Starting GetFullAddress...");
