@@ -31,7 +31,11 @@ namespace BusInfo
                 throw new ArgumentNullException(nameof(lon));
             }
 
-            if (lat.Length > 0 && lon.Length > 0)
+            if (lat.Length == 0 || lon.Length == 0)
+            {
+                throw new ArgumentException("You are missing latitude and longitude.");
+            }
+            else
             {
                 var latDouble = double.Parse(lat);
                 var lonDouble = double.Parse(lon);
@@ -39,10 +43,6 @@ namespace BusInfo
                 {
                     throw new ArgumentException("Exceeds boundaries. Not a valid latitude or longitude.");
                 }
-            }
-            else
-            {
-                throw new ArgumentException("You are missing latitude and longitude.");
             }
         }
 
