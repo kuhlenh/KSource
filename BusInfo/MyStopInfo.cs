@@ -211,6 +211,8 @@ namespace BusInfo
             }
 
             //Stop minDistStop = stops.First();
+            var min = (from stop in stops
+                        select GeocodeHelpers.CalculateDistanceFormula(lat, stop.Lat, lon, stop.Lon)).Min();
             
             return (route, minDistStop);
         }
