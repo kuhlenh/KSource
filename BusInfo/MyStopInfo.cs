@@ -220,8 +220,8 @@ namespace BusInfo
             }
 
             //Stop minDistStop = stops.First();
-            var min = enumerable().Min();
-            Stop minDistStop = stops.Where(x => GeocodeHelpers.CalculateDistanceFormula(lat, lon, x.Lat, x.Lon) == min).FirstOrDefault();
+            var min = enumerable().OrderBy(x=>x.distance).First();
+            Stop minDistStop = stops[min.index];
 
             return (route, minDistStop);
         }
