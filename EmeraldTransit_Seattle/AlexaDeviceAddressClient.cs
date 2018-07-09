@@ -65,6 +65,84 @@ namespace EmeraldTransit_Seattle
                 case HttpStatusCode.Forbidden:
                     logger.LogLine("\nThe consent token we had wasn't authorized to access the user's address. ");
                     return "";
+                case HttpStatusCode.Accepted:
+                    break;
+                case HttpStatusCode.Ambiguous:
+                    break;
+                case HttpStatusCode.BadGateway:
+                    break;
+                case HttpStatusCode.BadRequest:
+                    break;
+                case HttpStatusCode.Conflict:
+                    break;
+                case HttpStatusCode.Continue:
+                    break;
+                case HttpStatusCode.Created:
+                    break;
+                case HttpStatusCode.ExpectationFailed:
+                    break;
+                case HttpStatusCode.Found:
+                    break;
+                case HttpStatusCode.GatewayTimeout:
+                    break;
+                case HttpStatusCode.Gone:
+                    break;
+                case HttpStatusCode.HttpVersionNotSupported:
+                    break;
+                case HttpStatusCode.InternalServerError:
+                    break;
+                case HttpStatusCode.LengthRequired:
+                    break;
+                case HttpStatusCode.MethodNotAllowed:
+                    break;
+                case HttpStatusCode.Moved:
+                    break;
+                case HttpStatusCode.NonAuthoritativeInformation:
+                    break;
+                case HttpStatusCode.NotAcceptable:
+                    break;
+                case HttpStatusCode.NotFound:
+                    break;
+                case HttpStatusCode.NotImplemented:
+                    break;
+                case HttpStatusCode.NotModified:
+                    break;
+                case HttpStatusCode.PartialContent:
+                    break;
+                case HttpStatusCode.PaymentRequired:
+                    break;
+                case HttpStatusCode.PreconditionFailed:
+                    break;
+                case HttpStatusCode.ProxyAuthenticationRequired:
+                    break;
+                case HttpStatusCode.RedirectKeepVerb:
+                    break;
+                case HttpStatusCode.RedirectMethod:
+                    break;
+                case HttpStatusCode.RequestedRangeNotSatisfiable:
+                    break;
+                case HttpStatusCode.RequestEntityTooLarge:
+                    break;
+                case HttpStatusCode.RequestTimeout:
+                    break;
+                case HttpStatusCode.RequestUriTooLong:
+                    break;
+                case HttpStatusCode.ResetContent:
+                    break;
+                case HttpStatusCode.ServiceUnavailable:
+                    break;
+                case HttpStatusCode.SwitchingProtocols:
+                    break;
+                case HttpStatusCode.Unauthorized:
+                    break;
+                case HttpStatusCode.UnsupportedMediaType:
+                    break;
+                case HttpStatusCode.Unused:
+                    break;
+                case HttpStatusCode.UpgradeRequired:
+                    break;
+                case HttpStatusCode.UseProxy:
+                    break;
                 default:
                     logger.LogLine("\nUnknown location failure.");
                     return "";
