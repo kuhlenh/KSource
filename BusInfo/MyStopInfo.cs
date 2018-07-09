@@ -212,8 +212,9 @@ namespace BusInfo
 
             IEnumerable<double> enumerable()
             {
-                foreach (var stop in stops)
+                for (var i = 0; i < stops.Count; i++)
                 {
+                    Stop stop = stops[i];
                     yield return GeocodeHelpers.CalculateDistanceFormula(lat, lon, stop.Lat, stop.Lon);
                 }
             }
