@@ -1,4 +1,4 @@
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -166,7 +166,8 @@ namespace BusInfo
             foreach(var t in busTimes)
             {
                 var delta = t - universalTime;
-                timeUntil.Add(delta.TotalMinutes);
+                var totalMinutes = delta.TotalMinutes;
+                timeUntil.Add(totalMinutes);
             }
             return timeUntil;
         }
