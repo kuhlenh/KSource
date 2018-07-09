@@ -210,9 +210,16 @@ namespace BusInfo
                 throw new ArgumentException("No stops were found within a mile of your location for your bus route.");
             }
 
+            IEnumerable<double> enumerable()
+            {
+                foreach (var stop in stops)
+                {
+                    yield return GeocodeHelpers.CalculateDistanceFormula(lat, lon, stop.Lat, stop.Lon);
+                }
+            }
+
             //Stop minDistStop = stops.First();
-            var min = (from stop in stops
-                        select GeocodeHelpers.CalculateDistanceFormula(lat, lon, stop.Lat, stop.Lon)).Min();
+            var min = enumerable().Min();
             Stop minDistStop = stops.Where(x => GeocodeHelpers.CalculateDistanceFormula(lat, lon, x.Lat, x.Lon) == min).FirstOrDefault();
 
             return (route, minDistStop);
