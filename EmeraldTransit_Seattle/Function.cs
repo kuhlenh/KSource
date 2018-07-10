@@ -18,7 +18,7 @@ namespace EmeraldTransit_Seattle
 
     public class Function
     {
-        HttpClient client = new HttpClient();
+        private HttpClient _client = new HttpClient();
         private IMapLocator _mapLocator;
         private IAlexaDeviceAddressClient _deviceAddressClient;
         private MyStopInfo _busInfo;
@@ -40,8 +40,10 @@ namespace EmeraldTransit_Seattle
         public async Task<SkillResponse> FunctionHandler(SkillRequest input, ILambdaContext context)
         {
             //create a response to return
-            SkillResponse response = new SkillResponse();
-            response.Response = new ResponseBody();
+            SkillResponse response = new SkillResponse
+            {
+                Response = new ResponseBody()
+            };
             response.Response.ShouldEndSession = false;
             IOutputSpeech innerResponse = new PlainTextOutputSpeech() { Text = "testing" };
             var log = (ILogger)context.Logger;
@@ -89,8 +91,10 @@ namespace EmeraldTransit_Seattle
                             log.LogLine("\nUser did not give permission to access their location.");
                             var permissionCard = new AskForPermissionsConsentCard();
                             permissionCard.Permissions.Add(RequestedPermission.FullAddress);
-                            var speech = new SsmlOutputSpeech();
-                            speech.Ssml = "<speak>You need to enable permissions.</speak>";
+                            var speech = new SsmlOutputSpeech
+                            {
+                                Ssml = "<speak>You need to enable permissions.</speak>"
+                            };
 
                             // create and return the card response
                             response = ResponseBuilder.TellWithAskForPermissionsConsentCard(speech, permissionCard.Permissions);

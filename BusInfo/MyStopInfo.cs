@@ -11,8 +11,9 @@ namespace BusInfo
     {
         private readonly IBusLocator _busLocator;
         private readonly ITimeZoneConverter _timezoneConverter;
+
         // src: http://stackoverflow.com/questions/5996320/net-timezoneinfo-from-olson-time-zone
-        readonly Dictionary<string, string> _olsonWindowsTimes = new Dictionary<string, string>()
+        private readonly Dictionary<string, string> _olsonWindowsTimes = new Dictionary<string, string>()
         {
             { "Africa/Bangui", "W. Central Africa Standard Time" },
             { "Africa/Cairo", "Egypt Standard Time" },
@@ -159,7 +160,7 @@ namespace BusInfo
 
             var universalTime = time.ToUniversalTime();
             var busTimes = arrivalData
-                            .Where(a=> a.PredictedArrivalTime != null && (Int64)a.PredictedArrivalTime > 0)
+                            .Where(a=> a.PredictedArrivalTime != null && (long)a.PredictedArrivalTime > 0)
                             .Select(a => BusHelpers.ConvertMillisecondsToUTC(a.PredictedArrivalTime));
 
             var timeUntil = new List<double>();
