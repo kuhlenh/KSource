@@ -43,9 +43,18 @@ namespace EmeraldTransit_Seattle
 
             logger.LogLine(String.Format("\n\nURI: {0}", uri));
 
-            var response = await _client.GetAsync(uri);
+            HttpResponseMessage response;
+            if (_client != null)
+            {
+                response = await _client.GetAsync(uri);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
 
             var code = response.StatusCode;
+
             logger.LogLine(String.Format("\nHttpCode for AlexaDeviceAddressClient: {0}", code));
 
             if (code == HttpStatusCode.OK)
