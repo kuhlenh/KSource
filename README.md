@@ -4,8 +4,10 @@ You can see the whole talk on [Ch9](https://channel9.msdn.com/Events/Build/2018/
 ## Setup
 1. Install Visual Studio 2017 15.8
 1. Download source code for demo
+1. Git clean -xdf (delete old LUT data, prevent autostart, etc).
 1. Have a breakpoint on the open brace of ```GetArrivalTimesForRouteName(...)``` (MyStopInfo, line 150)
 1. Tools>Options>Text Editor>C#>Advanced>Enable navigation to decompiled assemblies
+1. Delete %localappdata%\sourceserver 
 1. [Visual Studio Live Share](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsls-vs)
 1. [Visual Studio IntelliCode](https://marketplace.visualstudio.com/items?itemName=VisualStudioExptTeam.VSIntelliCode)
 
@@ -58,8 +60,12 @@ You can see the whole talk on [Ch9](https://channel9.msdn.com/Events/Build/2018/
             select GeocodeHelpers.CalculateDistanceFormula(lat, stop.Lat, lon, stop.Lon)).Min();
  Stop minDistStop = stops.Where(x => GeocodeHelpers.CalculateDistanceFormula(lat, x.Lat, lon, x.Lon) == min).FirstOrDefault();
 ```
-1. Use **Ctrl+.** to generate the missing method ```GeocodeHelpers.CalculateDistanceFormula```. Use **Ctrl+Click** to create a hyperlink on the ```GeocodeHelpers.CalculateDistanceFormula``` symbol to Go To Definition.
+1. Use **Ctrl+.** to generate the missing method ```GeocodeHelpers.CalculateDistanceFormula```. 
+1. Convert LINQ to foreach, foreach to for
+1. Hover over `=>` to show lambda captures
+1. Use **Ctrl+Click** to create a hyperlink on the ```GeocodeHelpers.CalculateDistanceFormula``` symbol to Go To Definition.
     * Change the return type of the method to ```double```
+    * Use **Ctrl+.** to add braces
     * Use **Ctrl+.** to Change Method Signature and reorder parameters so that the location pairs are organized by type
     * Inside the method body, type ```var distance = Math.```. See the IntelliCode suggestions.
     * Now change ```var``` to ```double``` and use **Ctrl+Space** to bring up completion again and show a different list based on the new context
@@ -83,15 +89,15 @@ You can see the whole talk on [Ch9](https://channel9.msdn.com/Events/Build/2018/
 1. Add the following to the list of bus stops:
 ```
 {
-        "code": '"700"',
-        "direction": '"NW"',
-        "id": '"Testing-1-2-3"',
+        "code": "\"700\"",
+        "direction": "\"NW\"",
+        "id": "\"Testing-1-2-3\"",
         "lat": 47.611960,
         "locationType": 0,
         "lon": -122.332893,
-        "name": '"NewStop"',
+        "name": "\"NewStop\"",
         "routeIds": [ "1_100264", "40_100236" ],
-        "wheelchairBoarding": '"UNKNOWN"'
+        "wheelchairBoarding": "\"UNKNOWN\""
 }
 ```
   * Notice that the json is invalid because of escaped characters. Use **multi-caret mode** commands to fix.
@@ -122,5 +128,4 @@ You can see the whole talk on [Ch9](https://channel9.msdn.com/Events/Build/2018/
 1. Add missing accessibility modifiers
 1. Make readonly
 1. Order modifiers
-1. Convert LINQ to foreach, foreach to for
 1. Invert if
