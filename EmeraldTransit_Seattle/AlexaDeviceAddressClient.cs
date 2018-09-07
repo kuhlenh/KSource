@@ -16,9 +16,9 @@ namespace EmeraldTransit_Seattle
         Task<string> GetFullAddressAsync(ILogger logger);
     }
 
-    class AlexaDeviceAddressClient : IAlexaDeviceAddressClient
+    internal class AlexaDeviceAddressClient : IAlexaDeviceAddressClient
     {
-        private readonly static (string,string) _defaultLocation = BusInfo.GeocodeHelpers.GetDefaultLocation();
+        private readonly static (string,string) s_defaultLocation = BusInfo.GeocodeHelpers.GetDefaultLocation();
         private string _scheme = "Bearer";
         HttpClient _client;
         public string ApiEndpoint { get; set; }
@@ -43,9 +43,18 @@ namespace EmeraldTransit_Seattle
 
             logger.LogLine(String.Format("\n\nURI: {0}", uri));
 
-            var response = await _client.GetAsync(uri);
+            HttpResponseMessage response;
+            if (_client != null)
+            {
+                response = await _client.GetAsync(uri);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
 
             var code = response.StatusCode;
+
             logger.LogLine(String.Format("\nHttpCode for AlexaDeviceAddressClient: {0}", code));
 
             if (code == HttpStatusCode.OK)
@@ -78,6 +87,7 @@ namespace EmeraldTransit_Seattle
 
     public class Address
     {
+#pragma warning disable IDE1006
         public string stateOrRegion { get; set; }
         public string city { get; set; }
         public string countryCode { get; set; }
@@ -86,6 +96,7 @@ namespace EmeraldTransit_Seattle
         public string addressLine2 { get; set; }
         public string addressLine3 { get; set; }
         public string districtOrCounty { get; set; }
+#pragma warning restore IDE1006
 
         public override string ToString()
         {
